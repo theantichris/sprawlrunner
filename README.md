@@ -8,7 +8,13 @@
 
 A rouge-like ASCII game in a cyberpunk universe inspired by [ADOM](https://www.adom.de/home/index.html) and [Shadowrun](https://store.catalystgamelabs.com/collections/shadowrun).
 
-## Stack
+## Controls
 
-- Go
-- tcell
+### Movement
+
+| key              |       |
+| ---------------- | ----- |
+| up arrow or k    | up    |
+| down arrow or j  | down  |
+| left arrow or h  | left  |
+| right arrow or l | right |
