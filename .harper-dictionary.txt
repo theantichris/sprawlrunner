@@ -1,8 +1,10 @@
 ADOM
 CD
+MovePlayer
 NewGame
 Shadowrun
 TODOs
+dx
 putCentered
 sprawlrunner
 tcell

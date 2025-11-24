@@ -65,3 +65,24 @@ func NewGame(width, height int) *Game {
 
 	return game
 }
+
+// MovePlayer attempts to move the player by (dx, dy). The move only succeeds
+// if the target tile is inside the map and is walkable.
+func (game *Game) MovePlayer(dx, dy int) {
+	newX := game.Player.X + dx
+	newY := game.Player.Y + dy
+
+	// Prevent player from moving off the map.
+	if newX < 0 || newX >= game.Width || newY < 0 || newY >= game.Height {
+		return
+	}
+
+	// Prevent player from moving into walls.
+	target := game.Tiles[newY][newX]
+	if !target.Walkable {
+		return
+	}
+
+	game.Player.X = newX
+	game.Player.Y = newY
+}
