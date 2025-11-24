@@ -1,10 +1,14 @@
 # Sprawlrunner
 
-A rouge-like ASCII game in a cyberpunk universe.
+[![Go Reference](https://pkg.go.dev/badge/github.com/theantichris/sprawlrunner.svg)](https://pkg.go.dev/github.com/theantichris/sprawlrunner)
+[![Build Status](https://github.com/theantichris/sprawlrunner/actions/workflows/go.yml/badge.svg)](https://github.com/theantichris/sprawlrunner/actions)
+[![Build Status](https://github.com/theantichris/sprawlrunner/actions/workflows/markdown.yml/badge.svg)](https://github.com/theantichris/sprawlrunner/actions)
+[![Go ReportCard](https://goreportcard.com/badge/theantichris/sprawrunner)](https://goreportcard.com/report/theantichris/sprawrunner)
+![license](https://img.shields.io/badge/license-MIT-informational?style=flat)
 
-## TODOs
+A rouge-like ASCII game in a cyberpunk universe inspired by [ADOM](https://www.adom.de/home/index.html) and [Shadowrun](https://store.catalystgamelabs.com/collections/shadowrun).
 
-- [ ] Add Go Releaser
-- [ ] Add pre-commit hooks
-- [ ] Add CI/CD actions
-- [ ] Add README badges
+## Stack
+
+- Go
+- tcell
