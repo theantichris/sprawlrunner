@@ -1,24 +1,30 @@
 package main
 
 import (
-	"log"
+	"os"
 
+	"github.com/charmbracelet/log"
 	"github.com/gdamore/tcell/v2"
 	"github.com/theantichris/sprawlrunner/internal/game"
 )
 
-// TODO: Bring in charm/log
-
 // main is the entry point for the Sprawlrunner game binary. It initializes
 // the terminal screen, creates a new game, and enters the main loop.
 func main() {
+	logger := log.NewWithOptions(os.Stderr, log.Options{
+		Formatter:       log.JSONFormatter,
+		ReportCaller:    true,
+		ReportTimestamp: true,
+		Level:           log.DebugLevel,
+	})
+
 	screen, err := tcell.NewScreen()
 	if err != nil {
-		log.Fatalf("error creating screen: %v", err)
+		logger.Fatalf("error creating screen: %v", err)
 	}
 
 	if err = screen.Init(); err != nil {
-		log.Fatalf("error initializing screen: %v", err)
+		logger.Fatalf("error initializing screen: %v", err)
 	}
 
 	defer screen.Fini()
