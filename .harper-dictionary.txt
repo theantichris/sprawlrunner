@@ -3,8 +3,10 @@ CD
 MovePlayer
 NewGame
 Shadowrun
+TODO
 TODOs
 dx
+handleKey
 putCentered
 sprawlrunner
 tcell

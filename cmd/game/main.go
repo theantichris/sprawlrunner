@@ -4,16 +4,21 @@ import (
 	"log"
 
 	"github.com/gdamore/tcell/v2"
+	"github.com/theantichris/sprawlrunner/internal/game"
 )
 
+// TODO: Bring in charm/log
+
+// main is the entry point for the Sprawlrunner game binary. It initializes
+// the terminal screen, creates a new game, and enters the main loop.
 func main() {
 	screen, err := tcell.NewScreen()
 	if err != nil {
-		log.Fatalf("creating screen: %v", err)
+		log.Fatalf("error creating screen: %v", err)
 	}
 
 	if err = screen.Init(); err != nil {
-		log.Fatalf("initializing screen: %v", err)
+		log.Fatalf("error initializing screen: %v", err)
 	}
 
 	defer screen.Fini()
@@ -23,12 +28,25 @@ func main() {
 		Foreground(tcell.ColorDarkCyan).
 		Background(tcell.ColorBlack)
 
+	width, height := screen.Size()
+
+	// Derive map size from terminal, with a minimum size for safety.
+	mapWidth := width - 2
+	mapHeight := height - 2
+
+	if mapWidth < 10 {
+		mapWidth = 10
+	}
+
+	if mapHeight < 10 {
+		mapHeight = 10
+	}
+
+	game := game.NewGame(mapWidth, mapHeight)
+
 	screen.SetStyle(defaultStyle)
 	screen.Clear()
-
-	title := "sprawlrunner (q to quit)"
-	putCentered(screen, title)
-
+	drawGame(screen, game, defaultStyle)
 	screen.Show()
 
 	// Main event loop (just waits for quit key for now)
@@ -37,29 +55,83 @@ func main() {
 
 		switch eventType := event.(type) {
 		case *tcell.EventKey:
-			switch eventType.Key() {
-			case tcell.KeyEscape, tcell.KeyCtrlC:
+			if handleKey(eventType, game) {
+				// true means "quit requested"
 				return
-			default:
-				if eventType.Rune() == 'q' || eventType.Rune() == 'Q' {
-					return
-				}
 			}
+
+			screen.Clear()
+			drawGame(screen, game, defaultStyle)
+			screen.Show()
 		case *tcell.EventResize:
 			screen.Clear()
-			putCentered(screen, title)
+			drawGame(screen, game, defaultStyle)
 			screen.Show()
 		}
 	}
 }
 
-// putCentered puts a string in the center of the screen.
-func putCentered(screen tcell.Screen, text string) {
-	width, height := screen.Size()
-	x := (width - len(text)) / 2
-	y := height / 2
+// handleKey processes a single key event and updates game state. It returns
+// true if the caller should quit the game.
+func handleKey(event *tcell.EventKey, game *game.Game) bool {
+	switch event.Key() {
+	case tcell.KeyEscape, tcell.KeyCtrlC:
+		return true
 
-	for index, rune := range text {
-		screen.SetContent(x+index, y, rune, nil, tcell.StyleDefault)
+	case tcell.KeyUp:
+		game.MovePlayer(0, -1)
+
+	case tcell.KeyDown:
+		game.MovePlayer(0, 1)
+
+	case tcell.KeyLeft:
+		game.MovePlayer(-1, 0)
+
+	case tcell.KeyRight:
+		game.MovePlayer(1, 0)
+	default:
+		switch event.Rune() {
+		case 'q', 'Q':
+			return true
+
+		case 'h':
+			game.MovePlayer(-1, 0)
+
+		case 'j':
+			game.MovePlayer(0, 1)
+
+		case 'k':
+			game.MovePlayer(0, -1)
+		case 'l':
+			game.MovePlayer(1, 0)
+		}
 	}
+
+	return false
+}
+
+// drawGame renders the current game state (map and player) onto the given
+// screen using the provided base style for tiles.
+func drawGame(screen tcell.Screen, game *game.Game, style tcell.Style) {
+	// Offset map slightly from the top left for a cleaner look.
+	const offsetX = 1
+	const offsetY = 1
+
+	// Draw tiles.
+	for y := 0; y < game.Height; y++ {
+		for x := 0; x < game.Width; x++ {
+			tile := game.Tiles[y][x]
+			screen.SetContent(offsetX+x, offsetY+y, tile.Glyph, nil, style)
+		}
+	}
+
+	// Draw player with a distinct style to stand out.
+	playerStyle := style.Foreground(tcell.ColorGreen)
+	screen.SetContent(
+		offsetX+game.Player.X,
+		offsetY+game.Player.Y,
+		game.Player.Glyph,
+		nil,
+		playerStyle,
+	)
 }
