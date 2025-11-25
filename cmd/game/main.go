@@ -53,11 +53,14 @@ func run() error {
 
 		switch eventType := event.(type) {
 		case *tcell.EventKey:
-			if handleKey(eventType, game) {
-				return nil // true means quit requested
+			if eventType.Rune() == 'q' {
+				return nil
 			}
 
-			drawGame(screen, game, defaultStyle)
+			if dx, dy, ok := movementDeltaForKey(eventType); ok {
+				game.MovePlayer(dx, dy)
+				drawGame(screen, game, defaultStyle)
+			}
 		case *tcell.EventResize:
 			drawGame(screen, game, defaultStyle)
 		}
@@ -82,45 +85,6 @@ func initializeGame(screen tcell.Screen) *game.Game {
 	}
 
 	return game.NewGame(mapWidth, mapHeight)
-}
-
-// handleKey processes a single key event and updates game state. It returns
-// true if the caller should quit the game.
-func handleKey(event *tcell.EventKey, game *game.Game) bool {
-	switch event.Key() {
-	case tcell.KeyEscape, tcell.KeyCtrlC:
-		return true
-
-	case tcell.KeyUp:
-		game.MovePlayer(0, -1)
-
-	case tcell.KeyDown:
-		game.MovePlayer(0, 1)
-
-	case tcell.KeyLeft:
-		game.MovePlayer(-1, 0)
-
-	case tcell.KeyRight:
-		game.MovePlayer(1, 0)
-	default:
-		switch event.Rune() {
-		case 'q', 'Q':
-			return true
-
-		case 'h':
-			game.MovePlayer(-1, 0)
-
-		case 'j':
-			game.MovePlayer(0, 1)
-
-		case 'k':
-			game.MovePlayer(0, -1)
-		case 'l':
-			game.MovePlayer(1, 0)
-		}
-	}
-
-	return false
 }
 
 // drawGame renders the current game state (map and player) onto the given
@@ -151,4 +115,50 @@ func drawGame(screen tcell.Screen, game *game.Game, style tcell.Style) {
 	)
 
 	screen.Show()
+}
+
+// movementDeltaForKey turns a keypress into a movement delta.
+// Returns (dx, dy, true) if it's a movement key, otherwise (0, 0, false).
+func movementDeltaForKey(event *tcell.EventKey) (int, int, bool) {
+	switch event.Key() {
+	case tcell.KeyUp:
+		return 0, -1, true
+	case tcell.KeyDown:
+		return 0, 1, true
+	case tcell.KeyLeft:
+		return -1, 0, true
+	case tcell.KeyRight:
+		return 1, 0, true
+	case tcell.KeyHome:
+		return -1, -1, true
+	case tcell.KeyPgUp:
+		return 1, -1, true
+	case tcell.KeyEnd:
+		return -1, 1, true
+	case tcell.KeyPgDn:
+		return 1, 1, true
+	}
+
+	if event.Key() == tcell.KeyRune {
+		switch event.Rune() {
+		case 'h', '4':
+			return -1, 0, true
+		case 'j', '2':
+			return 0, 1, true
+		case 'k', '8':
+			return 0, -1, true
+		case 'l', '6':
+			return 1, 0, true
+		case 'y', '7':
+			return -1, -1, true
+		case 'u', '9':
+			return 1, -1, true
+		case 'b', '1':
+			return -1, 1, true
+		case 'n', '3':
+			return 1, 1, true
+		}
+	}
+
+	return 0, 0, false
 }

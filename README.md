@@ -11,11 +11,21 @@ and [Shadowrun](https://store.catalystgamelabs.com/collections/shadowrun).
 
 ## Controls
 
+### Interface
+
+| Action | Key |
+| ------ | --- |
+| Quit   | q   |
+
 ### Movement
 
-| key              |       |
-| ---------------- | ----- |
-| up arrow or k    | up    |
-| down arrow or j  | down  |
-| left arrow or h  | left  |
-| right arrow or l | right |
+| Direction  | Vi | Numpad | Arrows/Nav |
+| -----------| -- | ------ | ---------- |
+| up left    | y  | 7      | Home       |
+| up         | k  | 8      | ↑          |
+| up right   | u  | 9      | PgUp       |
+| left       | h  | 4      | ←          |
+| right      | l  | 6      | →          |
+| down left  | b  | 1      | End        |
+| down       | l  | 2      | ↓          |
+| down right | n  | 3      | PgDn       |
