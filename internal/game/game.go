@@ -1,19 +1,6 @@
 // Package game contains core game state and logic independent of rendering.
 package game
 
-// Tile represents a single map cell in the game world.
-type Tile struct {
-	Glyph    rune // Glyph is the rune used to render the tile in the terminal.
-	Walkable bool // Walkable indicates whether entities can move onto this tile.
-}
-
-// Player represents the runner controlled by the user.
-type Player struct {
-	X     int  // X is the player's horizontal position in tile coordinates.
-	Y     int  // Y is the player's vertical position in tile coordinates.
-	Glyph rune // Glyph is the rune used to render the player in the terminal.
-}
-
 // Game holds the current game state including map and entities.
 type Game struct {
 	Width  int      // Width describes the horizontal map dimensions in tiles.
