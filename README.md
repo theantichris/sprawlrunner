@@ -15,7 +15,7 @@ and [Shadowrun](https://store.catalystgamelabs.com/collections/shadowrun).
 
 | Action | Key |
 | ------ | --- |
-| Quit   | q   |
+| Quit   | Q   |
 
 ### Movement
 

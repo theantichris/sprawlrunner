@@ -20,7 +20,7 @@ func main() {
 	})
 
 	if err := run(); err != nil {
-		logger.Fatalf("error running game: %v", err)
+		logger.Fatalf("sprawl runner exited with error: %v", err)
 	}
 }
 
@@ -32,7 +32,15 @@ func run() error {
 		return fmt.Errorf("creating screen: %w", err)
 	}
 
-	defer screen.Fini()
+	defer func() {
+		screen.Fini()
+
+		// Always restore the terminal, even on panic.
+		if r := recover(); r != nil {
+			// Panic after clean up to see the stacktrace.
+			panic(r)
+		}
+	}()
 
 	if err = screen.Init(); err != nil {
 		return fmt.Errorf("initializing screen: %w", err)
@@ -53,7 +61,7 @@ func run() error {
 
 		switch eventType := event.(type) {
 		case *tcell.EventKey:
-			if eventType.Rune() == 'q' {
+			if eventType.Rune() == 'Q' {
 				return nil
 			}
 
