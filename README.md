@@ -6,9 +6,26 @@
 [![Go ReportCard](https://goreportcard.com/badge/theantichris/sprawrunner)](https://goreportcard.com/report/theantichris/sprawrunner)
 ![license](https://img.shields.io/badge/license-MIT-informational?style=flat)
 
-A rouge-like ASCII game in a cyberpunk universe inspired by [ADOM](https://www.adom.de/home/index.html) and [Shadowrun](https://store.catalystgamelabs.com/collections/shadowrun).
+A rogue-like ASCII game in a cyberpunk universe inspired by [ADOM](https://www.adom.de/home/index.html)
+and [Shadowrun](https://store.catalystgamelabs.com/collections/shadowrun).
 
-## Stack
+## Controls
 
-- Go
-- tcell
+### Interface
+
+| Action | Key |
+| ------ | --- |
+| Quit   | q   |
+
+### Movement
+
+| Direction  | Vi | Numpad | Arrows/Nav |
+| -----------| -- | ------ | ---------- |
+| up left    | y  | 7      | Home       |
+| up         | k  | 8      | ↑          |
+| up right   | u  | 9      | PgUp       |
+| left       | h  | 4      | ←          |
+| right      | l  | 6      | →          |
+| down left  | b  | 1      | End        |
+| down       | j  | 2      | ↓          |
+| down right | n  | 3      | PgDn       |
