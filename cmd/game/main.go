@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"os"
 
 	"github.com/charmbracelet/log"
@@ -9,7 +10,7 @@ import (
 )
 
 // main is the entry point for the Sprawlrunner game binary. It initializes
-// the terminal screen, creates a new game, and enters the main loop.
+// the logger and runs the game, exiting with an error if something goes wrong.
 func main() {
 	logger := log.NewWithOptions(os.Stderr, log.Options{
 		Formatter:       log.JSONFormatter,
@@ -18,21 +19,54 @@ func main() {
 		Level:           log.DebugLevel,
 	})
 
+	if err := run(); err != nil {
+		logger.Fatalf("error running game: %v", err)
+	}
+}
+
+// run initializes the terminal screen, creates a new game, and enters the
+// main event loop. It returns an error if initialization or game execution fails.
+func run() error {
 	screen, err := tcell.NewScreen()
 	if err != nil {
-		logger.Fatalf("error creating screen: %v", err)
-	}
-
-	if err = screen.Init(); err != nil {
-		logger.Fatalf("error initializing screen: %v", err)
+		return fmt.Errorf("creating screen: %w", err)
 	}
 
 	defer screen.Fini()
+
+	if err = screen.Init(); err != nil {
+		return fmt.Errorf("initializing screen: %w", err)
+	}
 
 	defaultStyle := tcell.StyleDefault.
 		Foreground(tcell.ColorGray).
 		Background(tcell.ColorBlack)
 
+	game := initializeGame(screen)
+
+	screen.SetStyle(defaultStyle)
+	drawGame(screen, game, defaultStyle)
+
+	// Main event loop
+	for {
+		event := screen.PollEvent()
+
+		switch eventType := event.(type) {
+		case *tcell.EventKey:
+			if handleKey(eventType, game) {
+				return nil // true means quit requested
+			}
+
+			drawGame(screen, game, defaultStyle)
+		case *tcell.EventResize:
+			drawGame(screen, game, defaultStyle)
+		}
+	}
+}
+
+// initializeGame creates and returns a new game based on the terminal screen
+// size.
+func initializeGame(screen tcell.Screen) *game.Game {
 	width, height := screen.Size()
 
 	// Derive map size from terminal, with a minimum size for safety.
@@ -47,32 +81,7 @@ func main() {
 		mapHeight = 10
 	}
 
-	game := game.NewGame(mapWidth, mapHeight)
-
-	screen.SetStyle(defaultStyle)
-	screen.Clear()
-	drawGame(screen, game, defaultStyle)
-	screen.Show()
-
-	// Main event loop
-	for {
-		event := screen.PollEvent()
-
-		switch eventType := event.(type) {
-		case *tcell.EventKey:
-			if handleKey(eventType, game) {
-				return // true means quit requested
-			}
-
-			screen.Clear()
-			drawGame(screen, game, defaultStyle)
-			screen.Show()
-		case *tcell.EventResize:
-			screen.Clear()
-			drawGame(screen, game, defaultStyle)
-			screen.Show()
-		}
-	}
+	return game.NewGame(mapWidth, mapHeight)
 }
 
 // handleKey processes a single key event and updates game state. It returns
@@ -117,6 +126,8 @@ func handleKey(event *tcell.EventKey, game *game.Game) bool {
 // drawGame renders the current game state (map and player) onto the given
 // screen using the provided base style for tiles.
 func drawGame(screen tcell.Screen, game *game.Game, style tcell.Style) {
+	screen.Clear()
+
 	// Offset map slightly from the top left for a cleaner look.
 	const offsetX = 1
 	const offsetY = 1
@@ -138,4 +149,6 @@ func drawGame(screen tcell.Screen, game *game.Game, style tcell.Style) {
 		nil,
 		playerStyle,
 	)
+
+	screen.Show()
 }
