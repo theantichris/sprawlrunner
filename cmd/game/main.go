@@ -55,15 +55,14 @@ func main() {
 	drawGame(screen, game, defaultStyle)
 	screen.Show()
 
-	// Main event loop (just waits for quit key for now)
+	// Main event loop
 	for {
 		event := screen.PollEvent()
 
 		switch eventType := event.(type) {
 		case *tcell.EventKey:
 			if handleKey(eventType, game) {
-				// true means "quit requested"
-				return
+				return // true means quit requested
 			}
 
 			screen.Clear()
@@ -132,7 +131,7 @@ func drawGame(screen tcell.Screen, game *game.Game, style tcell.Style) {
 	}
 
 	// Draw player with a distinct style to stand out.
-	playerStyle := style.Foreground(tcell.ColorGreen)
+	playerStyle := style.Foreground(tcell.ColorWhite)
 	screen.SetContent(
 		offsetX+game.Player.X,
 		offsetY+game.Player.Y,
