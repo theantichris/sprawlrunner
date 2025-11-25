@@ -29,9 +29,8 @@ func main() {
 
 	defer screen.Fini()
 
-	// Basic neon default style: bright text on dark background
 	defaultStyle := tcell.StyleDefault.
-		Foreground(tcell.ColorDarkCyan).
+		Foreground(tcell.ColorGray).
 		Background(tcell.ColorBlack)
 
 	width, height := screen.Size()
