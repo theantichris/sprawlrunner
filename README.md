@@ -27,5 +27,5 @@ and [Shadowrun](https://store.catalystgamelabs.com/collections/shadowrun).
 | left       | h  | 4      | ←          |
 | right      | l  | 6      | →          |
 | down left  | b  | 1      | End        |
-| down       | l  | 2      | ↓          |
+| down       | j  | 2      | ↓          |
 | down right | n  | 3      | PgDn       |
