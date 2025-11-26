@@ -29,17 +29,9 @@ func NewGame(width, height int) *Game {
 			isBorder := x == 0 || y == 0 || x == width-1 || y == height-1
 
 			if isBorder {
-				// Wall
-				row[x] = Tile{
-					Glyph:    '#',
-					Walkable: false,
-				}
+				row[x] = WallTile
 			} else {
-				// Floor
-				row[x] = Tile{
-					Glyph:    '.',
-					Walkable: true,
-				}
+				row[x] = FloorTile
 			}
 		}
 
