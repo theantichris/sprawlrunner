@@ -74,3 +74,12 @@ func (renderer *EbitenRenderer) Draw(screen *ebiten.Image) {
 func (renderer *EbitenRenderer) Layout(outsideWidth, outsideHeight int) (int, int) {
 	return renderer.screenWidth, renderer.screenHeight
 }
+
+// Close releases resources held by the renderer.
+func (renderer *EbitenRenderer) Close() error {
+	if renderer.fontFace != nil {
+		return renderer.fontFace.Close()
+	}
+
+	return nil
+}
