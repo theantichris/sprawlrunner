@@ -2,6 +2,7 @@ ADOM
 CD
 Ebiten
 EbitenRenderer
+LoadFont
 MovePlayer
 Nav
 NewEbitenRenderer
@@ -12,8 +13,10 @@ PgUp
 Shadowrun
 TODO
 TODOs
+TrueType
 dx
 dy
+fontSize
 handleKey
 mapHeight
 mapWidth
