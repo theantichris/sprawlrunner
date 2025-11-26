@@ -17,6 +17,8 @@ TODOs
 TrueType
 dx
 dy
+fontFace
+fontPath
 fontSize
 handleKey
 mapHeight
@@ -26,5 +28,7 @@ putCentered
 sprawlrunner
 tcell
 tileSize
+tileX
+tileY
 u
 x8

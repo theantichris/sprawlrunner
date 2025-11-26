@@ -15,29 +15,26 @@ type EbitenRenderer struct {
 	screenHeight int
 	tileSize     int
 	fontFace     *text.GoTextFace
-	fontSize     float64
 }
 
 // NewEbitenRenderer creates a new Ebiten based renderer for the given map
 // dimensions.
 // mapWidth and mapHeight are in tiles, which are converted to pixels based on
 // tileSize.
-func NewEbitenRenderer(mapWidth, mapHeight int) *EbitenRenderer {
+// fontPath specifies the TrueType font file to use and fontSize is in points.
+// Returns an error if the font cannot be loaded.
+func NewEbitenRenderer(mapWidth, mapHeight int, fontPath string, fontSize float64) (*EbitenRenderer, error) {
 	const tileSize = 16 // pixels per tile
 
-	return &EbitenRenderer{
+	renderer := &EbitenRenderer{
 		screenWidth:  mapWidth * tileSize,
 		screenHeight: mapHeight * tileSize,
 		tileSize:     tileSize,
 	}
-}
 
-// LoadFont loads a TrueType font from the given path at the specified size.
-// The fontSize is in points. Returns an error if the font cannot be loaded.
-func (renderer *EbitenRenderer) LoadFont(fontPath string, fontSize float64) error {
 	fontData, err := os.Open(fontPath)
 	if err != nil {
-		return fmt.Errorf("reading font file: %w", err)
+		return nil, fmt.Errorf("failed to open font file: %w", err)
 	}
 
 	defer func() {
@@ -46,7 +43,7 @@ func (renderer *EbitenRenderer) LoadFont(fontPath string, fontSize float64) erro
 
 	fontSource, err := text.NewGoTextFaceSource(fontData)
 	if err != nil {
-		return fmt.Errorf("parsing font: %w", err)
+		return nil, fmt.Errorf("failed to parse font: %w", err)
 	}
 
 	renderer.fontFace = &text.GoTextFace{
@@ -54,9 +51,7 @@ func (renderer *EbitenRenderer) LoadFont(fontPath string, fontSize float64) erro
 		Size:   fontSize,
 	}
 
-	renderer.fontSize = fontSize
-
-	return nil
+	return renderer, nil
 }
 
 // Update updates the game state. Required by ebiten.Game interface.
@@ -80,11 +75,6 @@ func (renderer *EbitenRenderer) Layout(outsideWidth, outsideHeight int) (int, in
 // RenderTile draws a single tile glyph at the specified tile coordinates.
 // tileX and tileY are in tile units which are converted to pixel coordinates.
 func (renderer *EbitenRenderer) RenderTile(screen *ebiten.Image, tile Tile, tileX, tileY int) {
-	// TODO: set fontFace in constructor
-	if renderer.fontFace == nil {
-		return // Can't render without a font
-	}
-
 	// Convert tile coordinates to pixel coordinates
 	pixelX := float64(tileX * renderer.tileSize)
 	pixelY := float64(tileY * renderer.tileSize)
