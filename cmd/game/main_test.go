@@ -7,109 +7,47 @@ import (
 )
 
 func TestInitializeGame(t *testing.T) {
-	tests := []struct {
-		name           string
-		screenWidth    int
-		screenHeight   int
-		expectedWidth  int
-		expectedHeight int
-	}{
-		{
-			name:           "standard terminal",
-			screenWidth:    80,
-			screenHeight:   24,
-			expectedWidth:  78,
-			expectedHeight: 22,
-		},
-		{
-			name:           "large terminal",
-			screenWidth:    120,
-			screenHeight:   40,
-			expectedWidth:  118,
-			expectedHeight: 38,
-		},
-		{
-			name:           "small terminal",
-			screenWidth:    15,
-			screenHeight:   15,
-			expectedWidth:  13,
-			expectedHeight: 13,
-		},
-		{
-			name:           "narrow terminal enforces minimum width",
-			screenWidth:    11,
-			screenHeight:   30,
-			expectedWidth:  10,
-			expectedHeight: 28,
-		},
-		{
-			name:           "short terminal enforces minimum height",
-			screenWidth:    30,
-			screenHeight:   11,
-			expectedWidth:  28,
-			expectedHeight: 10,
-		},
-		{
-			name:           "tiny terminal enforces both minimums",
-			screenWidth:    5,
-			screenHeight:   5,
-			expectedWidth:  10,
-			expectedHeight: 10,
-		},
-		{
-			name:           "minimum viable terminal",
-			screenWidth:    12,
-			screenHeight:   12,
-			expectedWidth:  10,
-			expectedHeight: 10,
-		},
+	screen := tcell.NewSimulationScreen("UTF-8")
+	err := screen.Init()
+
+	if err != nil {
+		t.Fatalf("want screen init success, got error: %v", err)
 	}
 
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			screen := tcell.NewSimulationScreen("UTF-8")
-			err := screen.Init()
+	defer screen.Fini()
 
-			if err != nil {
-				t.Fatalf("want screen init success, got error: %v", err)
-			}
+	screen.SetSize(80, 24)
 
-			defer screen.Fini()
+	game := initializeGame()
 
-			screen.SetSize(tt.screenWidth, tt.screenHeight)
+	if game == nil {
+		t.Fatal("want game, got nil")
+	}
 
-			game := initializeGame(screen)
+	if game.Width != 80 {
+		t.Errorf("want width 80, got %d", game.Width)
+	}
 
-			if game == nil {
-				t.Fatal("want game, got nil")
-			}
+	if game.Height != 24 {
+		t.Errorf("want height 24, got %d", game.Height)
+	}
 
-			if game.Width != tt.expectedWidth {
-				t.Errorf("want width %d, got %d", tt.expectedWidth, game.Width)
-			}
+	// Verify game is properly initialized with tiles
+	if len(game.Tiles) != game.Height {
+		t.Errorf("want tiles height %d, got %d", game.Height, len(game.Tiles))
+	}
 
-			if game.Height != tt.expectedHeight {
-				t.Errorf("want height %d, got %d", tt.expectedHeight, game.Height)
-			}
+	if len(game.Tiles) > 0 && len(game.Tiles[0]) != game.Width {
+		t.Errorf("want tiles width %d, got %d", game.Width, len(game.Tiles[0]))
+	}
 
-			// Verify game is properly initialized with tiles
-			if len(game.Tiles) != game.Height {
-				t.Errorf("want tiles height %d, got %d", game.Height, len(game.Tiles))
-			}
+	// Verify player is positioned
+	if game.Player.X < 0 || game.Player.X >= game.Width {
+		t.Errorf("want player X in range [0, %d), got %d", game.Width, game.Player.X)
+	}
 
-			if len(game.Tiles) > 0 && len(game.Tiles[0]) != game.Width {
-				t.Errorf("want tiles width %d, got %d", game.Width, len(game.Tiles[0]))
-			}
-
-			// Verify player is positioned
-			if game.Player.X < 0 || game.Player.X >= game.Width {
-				t.Errorf("want player X in range [0, %d), got %d", game.Width, game.Player.X)
-			}
-
-			if game.Player.Y < 0 || game.Player.Y >= game.Height {
-				t.Errorf("want player Y in range [0, %d), got %d", game.Height, game.Player.Y)
-			}
-		})
+	if game.Player.Y < 0 || game.Player.Y >= game.Height {
+		t.Errorf("want player Y in range [0, %d), got %d", game.Height, game.Player.Y)
 	}
 }
 
