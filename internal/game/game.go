@@ -29,7 +29,7 @@ func NewGame() *Game {
 	return game
 }
 
-// initializeMap creates 3 hard coded rooms with corridors and starts the player
+// initializeMap creates 3 hardcoded rooms with corridors and starts the player
 // in the center of room 1.
 func (game *Game) initializeMap(width, height int) {
 	// Initialize all tiles as walls
@@ -87,7 +87,7 @@ func (game *Game) CreateRoom(x, y, width, height int) {
 	}
 }
 
-// CreateCorridor creates a corridor between 2 points horizontally then vertically.
+// CreateCorridor creates a corridor between two points horizontally then vertically.
 func (game *Game) CreateCorridor(x1, y1, x2, y2 int) {
 	// Horizontal segment
 	for x := min(x1, x2); x <= max(x1, x2); x++ {
