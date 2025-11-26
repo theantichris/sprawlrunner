@@ -3,142 +3,77 @@ package game
 import "testing"
 
 func TestNewGame(t *testing.T) {
-	tests := []struct {
-		name   string
-		width  int
-		height int
-	}{
-		{
-			name:   "standard size",
-			width:  80,
-			height: 24,
-		},
-		{
-			name:   "small room",
-			width:  10,
-			height: 10,
-		},
-		{
-			name:   "minimum size",
-			width:  3,
-			height: 3,
-		},
-		{
-			name:   "rectangular wide",
-			width:  100,
-			height: 30,
-		},
-		{
-			name:   "rectangular tall",
-			width:  40,
-			height: 60,
-		},
+	game := NewGame()
+
+	if game.Width != 80 {
+		t.Errorf("want width 80, got %d", game.Width)
 	}
 
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			game := NewGame(tt.width, tt.height)
+	if game.Height != 24 {
+		t.Errorf("want height 24, got %d", game.Height)
+	}
 
-			// Check dimensions
-			if game.Width != tt.width {
-				t.Errorf("want width %d, got %d", tt.width, game.Width)
-			}
+	if len(game.Tiles) != 24 {
+		t.Errorf("want tiles height 24, got %d", len(game.Tiles))
+	}
 
-			if game.Height != tt.height {
-				t.Errorf("want height %d, got %d", tt.height, game.Height)
-			}
+	for y := range 24 {
+		if len(game.Tiles[y]) != 80 {
+			t.Errorf("want tiles[%d] width 80, got %d", y, len(game.Tiles[y]))
+		}
+	}
 
-			// Check tiles array is properly sized
-			if len(game.Tiles) != tt.height {
-				t.Errorf("want tiles height %d, got %d", tt.height, len(game.Tiles))
-			}
+	// Spot check Room 1 (at 10, 5, size 15x8)
+	// Check a few tiles inside Room 1 are floors
+	if game.Tiles[7][15].Glyph != '.' {
+		t.Errorf("want Room 1 interior tile glyph '.', got %c", game.Tiles[7][15].Glyph)
+	}
+	if !game.Tiles[7][15].Walkable {
+		t.Error("want Room 1 interior tile walkable true, got false")
+	}
 
-			for y := range tt.height {
-				if len(game.Tiles[y]) != tt.width {
-					t.Errorf("want tiles[%d] width %d, got %d", y, tt.width, len(game.Tiles[y]))
-				}
-			}
+	// Spot check Room 2 (at 35, 3, size 12x10)
+	if game.Tiles[8][41].Glyph != '.' {
+		t.Errorf("want Room 2 interior tile glyph '.', got %c", game.Tiles[8][41].Glyph)
+	}
+	if !game.Tiles[8][41].Walkable {
+		t.Error("want Room 2 interior tile walkable true, got false")
+	}
 
-			// Check borders are walls
-			for x := range tt.width {
-				// Top border
-				if game.Tiles[0][x].Glyph != '#' {
-					t.Errorf("want top border at x=%d glyph '#', got %c", x, game.Tiles[0][x].Glyph)
-				}
+	// Spot check Room 3 (at 55, 12, size 18x9)
+	if game.Tiles[16][64].Glyph != '.' {
+		t.Errorf("want Room 3 interior tile glyph '.', got %c", game.Tiles[16][64].Glyph)
+	}
+	if !game.Tiles[16][64].Walkable {
+		t.Error("want Room 3 interior tile walkable true, got false")
+	}
 
-				if game.Tiles[0][x].Walkable {
-					t.Errorf("want top border at x=%d walkable false, got true", x)
-				}
+	// Check a tile that should be a wall (outside rooms/corridors)
+	if game.Tiles[0][0].Glyph != '#' {
+		t.Errorf("want wall tile glyph '#', got %c", game.Tiles[0][0].Glyph)
+	}
+	if game.Tiles[0][0].Walkable {
+		t.Error("want wall tile walkable false, got true")
+	}
 
-				// Bottom border
-				if game.Tiles[tt.height-1][x].Glyph != '#' {
-					t.Errorf("want bottom border at x=%d glyph '#', got %c", x, game.Tiles[tt.height-1][x].Glyph)
-				}
+	// Check player position (center of Room 1)
+	if game.Player.X != 17 {
+		t.Errorf("want player X 17, got %d", game.Player.X)
+	}
 
-				if game.Tiles[tt.height-1][x].Walkable {
-					t.Errorf("want bottom border at x=%d walkable false, got true", x)
-				}
-			}
+	if game.Player.Y != 9 {
+		t.Errorf("want player Y 9, got %d", game.Player.Y)
+	}
 
-			for y := range tt.height {
-				// Left border
-				if game.Tiles[y][0].Glyph != '#' {
-					t.Errorf("want left border at y=%d glyph '#', got %c", y, game.Tiles[y][0].Glyph)
-				}
-
-				if game.Tiles[y][0].Walkable {
-					t.Errorf("want left border at y=%d walkable false, got true", y)
-				}
-
-				// Right border
-				if game.Tiles[y][tt.width-1].Glyph != '#' {
-					t.Errorf("want right border at y=%d glyph '#', got %c", y, game.Tiles[y][tt.width-1].Glyph)
-				}
-
-				if game.Tiles[y][tt.width-1].Walkable {
-					t.Errorf("want right border at y=%d walkable false, got true", y)
-				}
-			}
-
-			// Check interior tiles are floors (if room is large enough)
-			if tt.width > 2 && tt.height > 2 {
-				centerX := tt.width / 2
-				centerY := tt.height / 2
-
-				if game.Tiles[centerY][centerX].Glyph != '.' {
-					t.Errorf("want center tile glyph '.', got %c", game.Tiles[centerY][centerX].Glyph)
-				}
-
-				if !game.Tiles[centerY][centerX].Walkable {
-					t.Errorf("want center tile walkable true, got false")
-				}
-			}
-
-			// Check player position
-			expectedX := tt.width / 2
-			expectedY := tt.height / 2
-
-			if game.Player.X != expectedX {
-				t.Errorf("want player X %d, got %d", expectedX, game.Player.X)
-			}
-
-			if game.Player.Y != expectedY {
-				t.Errorf("want player Y %d, got %d", expectedY, game.Player.Y)
-			}
-
-			// Check player glyph
-			if game.Player.Glyph != '@' {
-				t.Errorf("want player glyph '@', got %c", game.Player.Glyph)
-			}
-		})
+	// Check player glyph
+	if game.Player.Glyph != '@' {
+		t.Errorf("want player glyph '@', got %c", game.Player.Glyph)
 	}
 }
 
 func TestMovePlayer(t *testing.T) {
 	tests := []struct {
 		name      string
-		width     int
-		height    int
 		startX    int
 		startY    int
 		dx        int
@@ -149,177 +84,129 @@ func TestMovePlayer(t *testing.T) {
 	}{
 		{
 			name:      "move right on floor",
-			width:     10,
-			height:    10,
-			startX:    5,
-			startY:    5,
+			startX:    15, // Inside Room 1
+			startY:    9,
 			dx:        1,
 			dy:        0,
-			expectX:   6,
-			expectY:   5,
+			expectX:   16,
+			expectY:   9,
 			wantMoved: true,
 		},
 		{
 			name:      "move left on floor",
-			width:     10,
-			height:    10,
-			startX:    5,
-			startY:    5,
+			startX:    15, // Inside Room 1
+			startY:    9,
 			dx:        -1,
 			dy:        0,
-			expectX:   4,
-			expectY:   5,
+			expectX:   14,
+			expectY:   9,
 			wantMoved: true,
 		},
 		{
 			name:      "move down on floor",
-			width:     10,
-			height:    10,
-			startX:    5,
-			startY:    5,
+			startX:    15, // Inside Room 1
+			startY:    9,
 			dx:        0,
 			dy:        1,
-			expectX:   5,
-			expectY:   6,
+			expectX:   15,
+			expectY:   10,
 			wantMoved: true,
 		},
 		{
 			name:      "move up on floor",
-			width:     10,
-			height:    10,
-			startX:    5,
-			startY:    5,
+			startX:    15, // Inside Room 1
+			startY:    9,
 			dx:        0,
 			dy:        -1,
-			expectX:   5,
-			expectY:   4,
+			expectX:   15,
+			expectY:   8,
 			wantMoved: true,
 		},
 		{
-			name:      "blocked by top wall",
-			width:     10,
-			height:    10,
-			startX:    5,
-			startY:    1,
-			dx:        0,
-			dy:        -1,
-			expectX:   5,
-			expectY:   1,
-			wantMoved: false,
-		},
-		{
-			name:      "blocked by bottom wall",
-			width:     10,
-			height:    10,
-			startX:    5,
-			startY:    8,
-			dx:        0,
-			dy:        1,
-			expectX:   5,
-			expectY:   8,
-			wantMoved: false,
-		},
-		{
-			name:      "blocked by left wall",
-			width:     10,
-			height:    10,
-			startX:    1,
-			startY:    5,
+			name:      "blocked by wall at room edge",
+			startX:    10, // Left edge of Room 1
+			startY:    9,
 			dx:        -1,
 			dy:        0,
-			expectX:   1,
-			expectY:   5,
+			expectX:   10,
+			expectY:   9,
 			wantMoved: false,
 		},
 		{
-			name:      "blocked by right wall",
-			width:     10,
-			height:    10,
-			startX:    8,
-			startY:    5,
-			dx:        1,
-			dy:        0,
-			expectX:   8,
+			name:      "blocked by wall at top of room",
+			startX:    15, // Inside Room 1
+			startY:    5,  // Top edge
+			dx:        0,
+			dy:        -1,
+			expectX:   15,
 			expectY:   5,
 			wantMoved: false,
 		},
 		{
 			name:      "blocked by left edge of map",
-			width:     10,
-			height:    10,
 			startX:    0,
-			startY:    5,
+			startY:    9,
 			dx:        -1,
 			dy:        0,
 			expectX:   0,
-			expectY:   5,
+			expectY:   9,
 			wantMoved: false,
 		},
 		{
 			name:      "blocked by right edge of map",
-			width:     10,
-			height:    10,
-			startX:    9,
-			startY:    5,
+			startX:    79,
+			startY:    9,
 			dx:        1,
 			dy:        0,
-			expectX:   9,
-			expectY:   5,
+			expectX:   79,
+			expectY:   9,
 			wantMoved: false,
 		},
 		{
 			name:      "blocked by top edge of map",
-			width:     10,
-			height:    10,
-			startX:    5,
+			startX:    15,
 			startY:    0,
 			dx:        0,
 			dy:        -1,
-			expectX:   5,
+			expectX:   15,
 			expectY:   0,
 			wantMoved: false,
 		},
 		{
 			name:      "blocked by bottom edge of map",
-			width:     10,
-			height:    10,
-			startX:    5,
-			startY:    9,
+			startX:    15,
+			startY:    23,
 			dx:        0,
 			dy:        1,
-			expectX:   5,
-			expectY:   9,
+			expectX:   15,
+			expectY:   23,
 			wantMoved: false,
 		},
 		{
 			name:      "no movement",
-			width:     10,
-			height:    10,
-			startX:    5,
-			startY:    5,
+			startX:    15,
+			startY:    9,
 			dx:        0,
 			dy:        0,
-			expectX:   5,
-			expectY:   5,
+			expectX:   15,
+			expectY:   9,
 			wantMoved: false,
 		},
 		{
 			name:      "large step blocked by edge",
-			width:     10,
-			height:    10,
-			startX:    5,
-			startY:    5,
-			dx:        10,
+			startX:    15,
+			startY:    9,
+			dx:        100,
 			dy:        0,
-			expectX:   5,
-			expectY:   5,
+			expectX:   15,
+			expectY:   9,
 			wantMoved: false,
 		},
 	}
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			game := NewGame(tt.width, tt.height)
+			game := NewGame()
 			game.Player.X = tt.startX
 			game.Player.Y = tt.startY
 
@@ -337,6 +224,112 @@ func TestMovePlayer(t *testing.T) {
 
 			if moved != tt.wantMoved {
 				t.Errorf("want player moved %v, got %v", tt.wantMoved, moved)
+			}
+		})
+	}
+}
+
+func TestCreateRoom(t *testing.T) {
+	game := &Game{
+		Width:  20,
+		Height: 15,
+		Tiles:  make([][]Tile, 15),
+	}
+
+	// Initialize all tiles as walls
+	for y := range 15 {
+		row := make([]Tile, 20)
+		for x := range 20 {
+			row[x] = WallTile
+		}
+		game.Tiles[y] = row
+	}
+
+	// Create a room at (5, 3) with size 8x6
+	game.CreateRoom(5, 3, 8, 6)
+
+	// Verify tiles inside the room are floors
+	for y := 3; y < 9; y++ { // 3 to 8 (3+6-1)
+		for x := 5; x < 13; x++ { // 5 to 12 (5+8-1)
+			if game.Tiles[y][x] != FloorTile {
+				t.Errorf("want tile at (%d,%d) to be FloorTile, got %v", x, y, game.Tiles[y][x])
+			}
+		}
+	}
+
+	// Verify tiles outside the room are still walls
+	// Check a tile before the room
+	if game.Tiles[3][4] != WallTile {
+		t.Errorf("want tile at (4,3) to be WallTile, got %v", game.Tiles[3][4])
+	}
+
+	// Check a tile after the room
+	if game.Tiles[3][13] != WallTile {
+		t.Errorf("want tile at (13,3) to be WallTile, got %v", game.Tiles[3][13])
+	}
+}
+
+func TestCreateCorridor(t *testing.T) {
+	tests := []struct {
+		name string
+		x1   int
+		y1   int
+		x2   int
+		y2   int
+	}{
+		{
+			name: "corridor right and down",
+			x1:   5,
+			y1:   5,
+			x2:   10,
+			y2:   10,
+		},
+		{
+			name: "corridor left and up",
+			x1:   10,
+			y1:   10,
+			x2:   5,
+			y2:   5,
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			game := &Game{
+				Width:  20,
+				Height: 20,
+				Tiles:  make([][]Tile, 20),
+			}
+
+			// Initialize all tiles as walls
+			for y := range 20 {
+				row := make([]Tile, 20)
+				for x := range 20 {
+					row[x] = WallTile
+				}
+				game.Tiles[y] = row
+			}
+
+			// Create the corridor
+			game.CreateCorridor(tt.x1, tt.y1, tt.x2, tt.y2)
+
+			// Verify horizontal segment is carved
+			for x := min(tt.x1, tt.x2); x <= max(tt.x1, tt.x2); x++ {
+				if game.Tiles[tt.y1][x] != FloorTile {
+					t.Errorf("want horizontal corridor tile at (%d,%d) to be FloorTile, got %v", x, tt.y1, game.Tiles[tt.y1][x])
+				}
+			}
+
+			// Verify vertical segment is carved
+			for y := min(tt.y1, tt.y2); y <= max(tt.y1, tt.y2); y++ {
+				if game.Tiles[y][tt.x2] != FloorTile {
+					t.Errorf("want vertical corridor tile at (%d,%d) to be FloorTile, got %v", tt.x2, y, game.Tiles[y][tt.x2])
+				}
+			}
+
+			// Verify a tile outside the corridor is still a wall
+			if game.Tiles[0][0] != WallTile {
+				t.Errorf("want tile at (0,0) to be WallTile, got %v", game.Tiles[0][0])
 			}
 		})
 	}

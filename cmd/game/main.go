@@ -50,7 +50,7 @@ func run() error {
 		Foreground(tcell.ColorGray).
 		Background(tcell.ColorBlack)
 
-	game := initializeGame(screen)
+	game := initializeGame()
 
 	screen.SetStyle(defaultStyle)
 	drawGame(screen, game, defaultStyle)
@@ -77,22 +77,8 @@ func run() error {
 
 // initializeGame creates and returns a new game based on the terminal screen
 // size.
-func initializeGame(screen tcell.Screen) *game.Game {
-	width, height := screen.Size()
-
-	// Derive map size from terminal, with a minimum size for safety.
-	mapWidth := width - 2
-	mapHeight := height - 2
-
-	if mapWidth < 10 {
-		mapWidth = 10
-	}
-
-	if mapHeight < 10 {
-		mapHeight = 10
-	}
-
-	return game.NewGame(mapWidth, mapHeight)
+func initializeGame() *game.Game {
+	return game.NewGame()
 }
 
 // drawGame renders the current game state (map and player) onto the given

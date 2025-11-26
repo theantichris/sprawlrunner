@@ -9,9 +9,12 @@ type Game struct {
 	Player Player   // Player represents the runner controlled by the user.
 }
 
-// NewGame creates a new Game with a single rectangular room and a player
-// positioned near the center.
-func NewGame(width, height int) *Game {
+// NewGame creates a new Game with three rooms connected by corridors.
+// The game map is fixed at 80x24 to match the hardcoded room layout.
+func NewGame() *Game {
+	const width = 80
+	const height = 24
+
 	game := &Game{
 		Width:  width,
 		Height: height,
@@ -21,28 +24,37 @@ func NewGame(width, height int) *Game {
 		},
 	}
 
-	// Create room.
+	game.initializeMap(width, height)
+
+	return game
+}
+
+// initializeMap creates 3 hardcoded rooms with corridors and starts the player
+// in the center of room 1.
+func (game *Game) initializeMap(width, height int) {
+	// Initialize all tiles as walls
 	for y := range height {
 		row := make([]Tile, width)
 
 		for x := range width {
-			isBorder := x == 0 || y == 0 || x == width-1 || y == height-1
-
-			if isBorder {
-				row[x] = WallTile
-			} else {
-				row[x] = FloorTile
-			}
+			row[x] = WallTile
 		}
 
 		game.Tiles[y] = row
 	}
 
-	// Start player roughly in the middle.
-	game.Player.X = width / 2
-	game.Player.Y = height / 2
+	// Create rooms
+	game.CreateRoom(10, 5, 15, 8)
+	game.CreateRoom(35, 3, 12, 10)
+	game.CreateRoom(55, 12, 18, 9)
 
-	return game
+	// Create corridors
+	game.CreateCorridor(17, 9, 41, 8)
+	game.CreateCorridor(41, 8, 64, 16)
+
+	// Start player in center of first room
+	game.Player.X = 17
+	game.Player.Y = 9
 }
 
 // MovePlayer attempts to move the player by (dx, dy). The move only succeeds
@@ -64,4 +76,26 @@ func (game *Game) MovePlayer(dx, dy int) {
 
 	game.Player.X = newX
 	game.Player.Y = newY
+}
+
+// CreateRoom creates a room at x, y with the specified dimensions.
+func (game *Game) CreateRoom(x, y, width, height int) {
+	for yPos := y; yPos < y+height; yPos++ {
+		for xPos := x; xPos < x+width; xPos++ {
+			game.Tiles[yPos][xPos] = FloorTile
+		}
+	}
+}
+
+// CreateCorridor creates a corridor between two points horizontally then vertically.
+func (game *Game) CreateCorridor(x1, y1, x2, y2 int) {
+	// Horizontal segment
+	for x := min(x1, x2); x <= max(x1, x2); x++ {
+		game.Tiles[y1][x] = FloorTile
+	}
+
+	// Vertical segment
+	for y := min(y1, y2); y <= max(y1, y2); y++ {
+		game.Tiles[y][x2] = FloorTile
+	}
 }
