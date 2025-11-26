@@ -2,11 +2,11 @@ package game
 
 import (
 	"fmt"
+	"image/color"
 	"os"
 
-	"github.com/golang/freetype/truetype"
 	"github.com/hajimehoshi/ebiten/v2"
-	"golang.org/x/image/font"
+	"github.com/hajimehoshi/ebiten/v2/text/v2"
 )
 
 // EbitenRenderer handles rendering a Game using the Ebiten game engine.
@@ -14,7 +14,7 @@ type EbitenRenderer struct {
 	screenWidth  int
 	screenHeight int
 	tileSize     int
-	fontFace     font.Face
+	fontFace     *text.GoTextFace
 	fontSize     float64
 }
 
@@ -35,22 +35,24 @@ func NewEbitenRenderer(mapWidth, mapHeight int) *EbitenRenderer {
 // LoadFont loads a TrueType font from the given path at the specified size.
 // The fontSize is in points. Returns an error if the font cannot be loaded.
 func (renderer *EbitenRenderer) LoadFont(fontPath string, fontSize float64) error {
-	fontData, err := os.ReadFile(fontPath)
+	fontData, err := os.Open(fontPath)
 	if err != nil {
 		return fmt.Errorf("reading font file: %w", err)
 	}
 
-	ttfFont, err := truetype.Parse(fontData)
+	defer func() {
+		_ = fontData.Close()
+	}()
+
+	fontSource, err := text.NewGoTextFaceSource(fontData)
 	if err != nil {
 		return fmt.Errorf("parsing font: %w", err)
 	}
 
-	const dpi = 72
-	renderer.fontFace = truetype.NewFace(ttfFont, &truetype.Options{
-		Size:    fontSize,
-		DPI:     dpi,
-		Hinting: font.HintingFull,
-	})
+	renderer.fontFace = &text.GoTextFace{
+		Source: fontSource,
+		Size:   fontSize,
+	}
 
 	renderer.fontSize = fontSize
 
@@ -75,11 +77,23 @@ func (renderer *EbitenRenderer) Layout(outsideWidth, outsideHeight int) (int, in
 	return renderer.screenWidth, renderer.screenHeight
 }
 
-// Close releases resources held by the renderer.
-func (renderer *EbitenRenderer) Close() error {
-	if renderer.fontFace != nil {
-		return renderer.fontFace.Close()
+// RenderTile draws a single tile glyph at the specified tile coordinates.
+// tileX and tileY are in tile units which are converted to pixel coordinates.
+func (renderer *EbitenRenderer) RenderTile(screen *ebiten.Image, tile Tile, tileX, tileY int) {
+	// TODO: set fontFace in constructor
+	if renderer.fontFace == nil {
+		return // Can't render without a font
 	}
 
-	return nil
+	// Convert tile coordinates to pixel coordinates
+	pixelX := float64(tileX * renderer.tileSize)
+	pixelY := float64(tileY * renderer.tileSize)
+
+	// Draw the glyph as gray text
+	glyphString := string(tile.Glyph)
+	options := &text.DrawOptions{}
+	options.GeoM.Translate(pixelX, pixelY)
+	options.ColorScale.ScaleWithColor(color.Gray{Y: 192})
+
+	text.Draw(screen, glyphString, renderer.fontFace, options)
 }

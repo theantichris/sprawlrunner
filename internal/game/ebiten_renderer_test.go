@@ -36,3 +36,18 @@ func TestFontLoading(t *testing.T) {
 		t.Errorf("expected fontSize 16, got %f", renderer.fontSize)
 	}
 }
+
+func TestRenderTileGlyph(t *testing.T) {
+	renderer := NewEbitenRenderer(80, 24)
+
+	err := renderer.LoadFont("../../assets/fonts/Go-Mono.ttf", 16)
+	if err != nil {
+		t.Fatalf("failed to load font: %v", err)
+	}
+
+	testImage := ebiten.NewImage(renderer.screenWidth, renderer.screenHeight)
+
+	// Can't verify pixel perfect rendering in a test.
+	// Verify the method exists and doesn't panic.
+	renderer.RenderTile(testImage, FloorTile, 0, 0)
+}
