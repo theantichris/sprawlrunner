@@ -14,6 +14,7 @@ type Game struct {
 func NewGame() *Game {
 	const width = 80
 	const height = 24
+
 	game := &Game{
 		Width:  width,
 		Height: height,
@@ -23,6 +24,14 @@ func NewGame() *Game {
 		},
 	}
 
+	game.initializeMap(width, height)
+
+	return game
+}
+
+// initializeMap creates 3 hard coded rooms with corridors and starts the player
+// in the center of room 1.
+func (game *Game) initializeMap(width, height int) {
 	// Initialize all tiles as walls
 	for y := range height {
 		row := make([]Tile, width)
@@ -46,8 +55,6 @@ func NewGame() *Game {
 	// Start player in center of first room
 	game.Player.X = 17
 	game.Player.Y = 9
-
-	return game
 }
 
 // MovePlayer attempts to move the player by (dx, dy). The move only succeeds
