@@ -1,7 +1,10 @@
 ADOM
 CD
+Ebiten
+EbitenRenderer
 MovePlayer
 Nav
+NewEbitenRenderer
 NewGame
 Numpad
 PgDn
@@ -12,9 +15,12 @@ TODOs
 dx
 dy
 handleKey
+mapHeight
+mapWidth
 movementDeltaForKey
 putCentered
 sprawlrunner
 tcell
+tileSize
 u
 x8
