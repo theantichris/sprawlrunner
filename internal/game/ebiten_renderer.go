@@ -24,6 +24,7 @@ type EbitenRenderer struct {
 // fontPath specifies the TrueType font file to use and fontSize is in points.
 // Returns an error if the font cannot be loaded.
 func NewEbitenRenderer(mapWidth, mapHeight int, fontPath string, fontSize float64) (*EbitenRenderer, error) {
+	// TODO: make package constants
 	const tileSize = 16 // pixels per tile
 
 	renderer := &EbitenRenderer{
@@ -96,4 +97,18 @@ func (renderer *EbitenRenderer) RenderMap(screen *ebiten.Image, game *Game) {
 			renderer.RenderTile(screen, tile, x, y)
 		}
 	}
+}
+
+// RenderPlayer draws the player character at their current position.
+func (renderer *EbitenRenderer) RenderPlayer(screen *ebiten.Image, player Player) {
+	// Convert tile coordinates to pixel coordinates
+	pixelX := float64(player.X * renderer.tileSize)
+	pixelY := float64(player.Y * renderer.tileSize)
+
+	glyphString := string(player.Glyph)
+	options := &text.DrawOptions{}
+	options.GeoM.Translate(pixelX, pixelY)
+	options.ColorScale.ScaleWithColor(color.White)
+
+	text.Draw(screen, glyphString, renderer.fontFace, options)
 }
