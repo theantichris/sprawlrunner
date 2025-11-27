@@ -2,7 +2,6 @@ package game
 
 import (
 	"fmt"
-	"image/color"
 	"os"
 
 	"github.com/hajimehoshi/ebiten/v2"
@@ -86,7 +85,7 @@ func (renderer *EbitenRenderer) RenderTile(screen *ebiten.Image, tile Tile, tile
 	glyphString := string(tile.Glyph)
 	options := &text.DrawOptions{}
 	options.GeoM.Translate(pixelX, pixelY)
-	options.ColorScale.ScaleWithColor(color.Gray{Y: 192})
+	options.ColorScale.ScaleWithColor(tile.Color)
 
 	text.Draw(screen, glyphString, renderer.fontFace, options)
 }
@@ -110,7 +109,7 @@ func (renderer *EbitenRenderer) RenderPlayer(screen *ebiten.Image, player Player
 	glyphString := string(player.Glyph)
 	options := &text.DrawOptions{}
 	options.GeoM.Translate(pixelX, pixelY)
-	options.ColorScale.ScaleWithColor(color.White) // TODO: move color to struct
+	options.ColorScale.ScaleWithColor(player.Color)
 
 	text.Draw(screen, glyphString, renderer.fontFace, options)
 }

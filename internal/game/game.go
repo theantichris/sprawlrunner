@@ -1,8 +1,10 @@
 // Package game contains core game state and logic independent of rendering.
 package game
 
+import "image/color"
+
 const (
-	mapWidth = 80
+	mapWidth  = 80
 	mapHeight = 24
 )
 
@@ -23,6 +25,7 @@ func NewGame() *Game {
 		Tiles:  make([][]Tile, mapHeight),
 		Player: Player{
 			Glyph: '@',
+			Color: color.White,
 		},
 	}
 
