@@ -39,3 +39,17 @@ func TestRenderTile(t *testing.T) {
 	// Verify the method exists and doesn't panic.
 	renderer.RenderTile(testImage, FloorTile, 0, 0)
 }
+
+func TestRenderMap(t *testing.T) {
+	renderer, err := NewEbitenRenderer(80, 24, "../../assets/fonts/Go-Mono.ttf", 16)
+	if err != nil {
+		t.Fatalf("failed to create renderer: %v", err)
+	}
+
+	game := NewGame()
+
+	testImage := ebiten.NewImage(renderer.screenWidth, renderer.screenHeight)
+
+	// Verify method exists and does not panic.
+	renderer.RenderMap(testImage, game)
+}

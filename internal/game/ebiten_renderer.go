@@ -87,3 +87,13 @@ func (renderer *EbitenRenderer) RenderTile(screen *ebiten.Image, tile Tile, tile
 
 	text.Draw(screen, glyphString, renderer.fontFace, options)
 }
+
+// RenderMap draws all the tiles from the game map onto the screen.
+func (renderer *EbitenRenderer) RenderMap(screen *ebiten.Image, game *Game) {
+	for y := range game.Height {
+		for x := range game.Width {
+			tile := game.Tiles[y][x]
+			renderer.RenderTile(screen, tile, x, y)
+		}
+	}
+}
