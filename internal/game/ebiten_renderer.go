@@ -9,6 +9,11 @@ import (
 	"github.com/hajimehoshi/ebiten/v2/text/v2"
 )
 
+const (
+	tileSize   = 16 // 16 pixels per tile
+	fontGoMono = "../../assets/fonts/Go-Mono.ttf"
+)
+
 // EbitenRenderer handles rendering a Game using the Ebiten game engine.
 type EbitenRenderer struct {
 	screenWidth  int
@@ -24,9 +29,6 @@ type EbitenRenderer struct {
 // fontPath specifies the TrueType font file to use and fontSize is in points.
 // Returns an error if the font cannot be loaded.
 func NewEbitenRenderer(mapWidth, mapHeight int, fontPath string, fontSize float64) (*EbitenRenderer, error) {
-	// TODO: make package constants
-	const tileSize = 16 // pixels per tile
-
 	renderer := &EbitenRenderer{
 		screenWidth:  mapWidth * tileSize,
 		screenHeight: mapHeight * tileSize,
@@ -108,7 +110,7 @@ func (renderer *EbitenRenderer) RenderPlayer(screen *ebiten.Image, player Player
 	glyphString := string(player.Glyph)
 	options := &text.DrawOptions{}
 	options.GeoM.Translate(pixelX, pixelY)
-	options.ColorScale.ScaleWithColor(color.White)
+	options.ColorScale.ScaleWithColor(color.White) // TODO: move color to struct
 
 	text.Draw(screen, glyphString, renderer.fontFace, options)
 }

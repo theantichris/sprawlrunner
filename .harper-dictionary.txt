@@ -32,4 +32,5 @@ tileSize
 tileX
 tileY
 u
+x24
 x8
