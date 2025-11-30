@@ -26,6 +26,7 @@ mapHeight
 mapWidth
 movementDeltaForKey
 putCentered
+renderGlyph
 sprawlrunner
 tcell
 tileSize

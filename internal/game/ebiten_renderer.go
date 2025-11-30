@@ -2,6 +2,7 @@ package game
 
 import (
 	"fmt"
+	"image/color"
 	"os"
 
 	"github.com/hajimehoshi/ebiten/v2"
@@ -74,20 +75,31 @@ func (renderer *EbitenRenderer) Layout(outsideWidth, outsideHeight int) (int, in
 	return renderer.screenWidth, renderer.screenHeight
 }
 
-// RenderTile draws a single tile glyph at the specified tile coordinates.
-// tileX and tileY are in tile units which are converted to pixel coordinates.
-func (renderer *EbitenRenderer) RenderTile(screen *ebiten.Image, tile Tile, tileX, tileY int) {
+// renderGlyph draws a single character glyph at the specified position with the given color.
+// This is a helper method used by RenderTile and RenderPlayer.
+func (renderer *EbitenRenderer) renderGlyph(screen *ebiten.Image, glyph rune, tileX, tileY int, color color.Color) {
 	// Convert tile coordinates to pixel coordinates
 	pixelX := float64(tileX * renderer.tileSize)
 	pixelY := float64(tileY * renderer.tileSize)
 
-	// Draw the glyph as gray text
-	glyphString := string(tile.Glyph)
+	// Draw the glyph
+	glyphString := string(glyph)
 	options := &text.DrawOptions{}
 	options.GeoM.Translate(pixelX, pixelY)
-	options.ColorScale.ScaleWithColor(tile.Color)
+	options.ColorScale.ScaleWithColor(color)
 
 	text.Draw(screen, glyphString, renderer.fontFace, options)
+}
+
+// RenderTile draws a single tile glyph at the specified tile coordinates.
+// tileX and tileY are in tile units which are converted to pixel coordinates.
+func (renderer *EbitenRenderer) RenderTile(screen *ebiten.Image, tile Tile, tileX, tileY int) {
+	renderer.renderGlyph(screen, tile.Glyph, tileX, tileY, tile.Color)
+}
+
+// RenderPlayer draws the player character at their current position.
+func (renderer *EbitenRenderer) RenderPlayer(screen *ebiten.Image, player Player) {
+	renderer.renderGlyph(screen, player.Glyph, player.X, player.Y, player.Color)
 }
 
 // RenderMap draws all the tiles from the game map onto the screen.
@@ -98,18 +110,4 @@ func (renderer *EbitenRenderer) RenderMap(screen *ebiten.Image, game *Game) {
 			renderer.RenderTile(screen, tile, x, y)
 		}
 	}
-}
-
-// RenderPlayer draws the player character at their current position.
-func (renderer *EbitenRenderer) RenderPlayer(screen *ebiten.Image, player Player) {
-	// Convert tile coordinates to pixel coordinates
-	pixelX := float64(player.X * renderer.tileSize)
-	pixelY := float64(player.Y * renderer.tileSize)
-
-	glyphString := string(player.Glyph)
-	options := &text.DrawOptions{}
-	options.GeoM.Translate(pixelX, pixelY)
-	options.ColorScale.ScaleWithColor(player.Color)
-
-	text.Draw(screen, glyphString, renderer.fontFace, options)
 }
