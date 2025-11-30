@@ -4,7 +4,6 @@ go 1.25.4
 
 require (
 	github.com/charmbracelet/log v0.4.2
-	github.com/gdamore/tcell/v2 v2.11.0
 	github.com/hajimehoshi/ebiten/v2 v2.9.4
 )
 
@@ -18,7 +17,6 @@ require (
 	github.com/ebitengine/gomobile v0.0.0-20250923094054-ea854a63cce1 // indirect
 	github.com/ebitengine/hideconsole v1.0.0 // indirect
 	github.com/ebitengine/purego v0.9.0 // indirect
-	github.com/gdamore/encoding v1.0.1 // indirect
 	github.com/go-logfmt/logfmt v0.6.0 // indirect
 	github.com/go-text/typesetting v0.3.0 // indirect
 	github.com/jezek/xgb v1.1.1 // indirect
@@ -32,6 +30,5 @@ require (
 	golang.org/x/image v0.33.0 // indirect
 	golang.org/x/sync v0.18.0 // indirect
 	golang.org/x/sys v0.38.0 // indirect
-	golang.org/x/term v0.37.0 // indirect
 	golang.org/x/text v0.31.0 // indirect
 )
