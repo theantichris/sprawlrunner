@@ -209,7 +209,9 @@ blank line)
 - **Error handling**: Wrap errors with context using fmt.Errorf or log.Fatalf
 for fatal errors (see main.go:12,16)
 - **Naming**: Use camelCase for unexported, PascalCase for exported; descriptive
-function names
+function names. Avoid abbreviations in variable and function names unless
+absolutely necessary (e.g., prefer `renderer` over `rend`, `game` over `g`,
+`error` over `err` is acceptable). Prioritize clarity and readability
 - **Comments**: Document exported functions with comments starting with function
 name
 - **Linting**: golangci-lint configured to exclude fmt.Fprintf/Fprintln/Fprint
