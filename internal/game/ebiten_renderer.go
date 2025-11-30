@@ -102,7 +102,7 @@ func (renderer *EbitenRenderer) Update() error {
 	}
 
 	// Quit
-	if ebiten.IsKeyPressed(ebiten.KeyQ) {
+	if ebiten.IsKeyPressed(ebiten.KeyShift) && ebiten.IsKeyPressed(ebiten.KeyQ) {
 		return ebiten.Termination
 	}
 
