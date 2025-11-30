@@ -53,7 +53,7 @@ func TestRenderMap(t *testing.T) {
 }
 
 func TestRenderPlayer(t *testing.T) {
-	renderer, err := NewEbitenRenderer(80, 24, "../../assets/fonts/Go-Mono.ttf", 16)
+	renderer, err := NewEbitenRenderer(mapWidth, mapHeight, fontGoMono, tileSize)
 	if err != nil {
 		t.Fatalf("failed to create renderer: %v", err)
 	}
@@ -63,4 +63,29 @@ func TestRenderPlayer(t *testing.T) {
 
 	// Verify method exists and does not panic.
 	renderer.RenderPlayer(testImage, game.Player)
+}
+
+func TestHandleInput(t *testing.T) {
+	renderer, err := NewEbitenRenderer(mapWidth, mapHeight, fontGoMono, tileSize)
+	if err != nil {
+		t.Fatalf("failed to create renderer: %v", err)
+	}
+
+	game := NewGame()
+	renderer.game = game
+
+	initX := game.Player.X
+	initY := game.Player.Y
+
+	// Simulate pressing the right arrow key
+	// Note: Can't easily simulate keypresses in unit tests, so this test verifies
+	// the game reference is stored correctly
+
+	if renderer.game == nil {
+		t.Error("expected game to be set, got nil")
+	}
+
+	if renderer.game.Player.X != initX || renderer.game.Player.Y != initY {
+		t.Errorf("player position changed unexpectedly: got (%d, %d), want (%d, %d)", renderer.game.Player.X, renderer.game.Player.Y, initX, initY)
+	}
 }

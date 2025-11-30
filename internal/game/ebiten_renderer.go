@@ -20,6 +20,7 @@ type EbitenRenderer struct {
 	screenHeight int
 	tileSize     int
 	fontFace     *text.GoTextFace
+	game         *Game
 }
 
 // NewEbitenRenderer creates a new Ebiten based renderer for the given map
@@ -60,14 +61,67 @@ func NewEbitenRenderer(mapWidth, mapHeight int, fontPath string, fontSize float6
 // Update updates the game state. Required by ebiten.Game interface.
 // Returns error if the game should terminate.
 func (renderer *EbitenRenderer) Update() error {
-	// TODO: Handle input and update game state.
+	if renderer.game == nil {
+		return nil
+	}
+
+	// Up
+	if ebiten.IsKeyPressed(ebiten.KeyArrowUp) || ebiten.IsKeyPressed(ebiten.KeyK) || ebiten.IsKeyPressed(ebiten.KeyNumpad8) {
+		renderer.game.MovePlayer(0, -1)
+	}
+
+	// Down
+	if ebiten.IsKeyPressed(ebiten.KeyArrowDown) || ebiten.IsKeyPressed(ebiten.KeyJ) || ebiten.IsKeyPressed(ebiten.KeyNumpad2) {
+		renderer.game.MovePlayer(0, 1)
+	}
+
+	// Left
+	if ebiten.IsKeyPressed(ebiten.KeyArrowLeft) || ebiten.IsKeyPressed(ebiten.KeyH) || ebiten.IsKeyPressed(ebiten.KeyNumpad4) {
+		renderer.game.MovePlayer(-1, 0)
+	}
+
+	// Right
+	if ebiten.IsKeyPressed(ebiten.KeyArrowRight) || ebiten.IsKeyPressed(ebiten.KeyL) || ebiten.IsKeyPressed(ebiten.KeyNumpad6) {
+		renderer.game.MovePlayer(1, 0)
+	}
+
+	// Up left
+	if ebiten.IsKeyPressed(ebiten.KeyHome) || ebiten.IsKeyPressed(ebiten.KeyY) || ebiten.IsKeyPressed(ebiten.KeyNumpad7) {
+		renderer.game.MovePlayer(-1, -1)
+	}
+
+	// Up right
+	if ebiten.IsKeyPressed(ebiten.KeyPageUp) || ebiten.IsKeyPressed(ebiten.KeyU) || ebiten.IsKeyPressed(ebiten.KeyNumpad9) {
+		renderer.game.MovePlayer(1, -1)
+	}
+
+	// Down left
+	if ebiten.IsKeyPressed(ebiten.KeyEnd) || ebiten.IsKeyPressed(ebiten.KeyB) || ebiten.IsKeyPressed(ebiten.KeyNumpad1) {
+		renderer.game.MovePlayer(-1, 1)
+	}
+
+	// Down right
+	if ebiten.IsKeyPressed(ebiten.KeyPageDown) || ebiten.IsKeyPressed(ebiten.KeyN) || ebiten.IsKeyPressed(ebiten.KeyNumpad3) {
+		renderer.game.MovePlayer(1, 1)
+	}
+
+	// Quit
+	if ebiten.IsKeyPressed(ebiten.KeyQ) {
+		return ebiten.Termination
+	}
 
 	return nil
 }
 
 // Draw renders the game state to the screen. Required by ebiten.Game interface.
 func (renderer *EbitenRenderer) Draw(screen *ebiten.Image) {
-	// TODO: Render tiles and player
+	if renderer.game == nil {
+		return
+	}
+
+	screen.Fill(color.Black) // Clear screen to black
+	renderer.RenderMap(screen, renderer.game)
+	renderer.RenderPlayer(screen, renderer.game.Player)
 }
 
 // Layout returns the game's logical screen size. Required by ebiten.Game interface.
