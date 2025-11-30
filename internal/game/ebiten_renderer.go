@@ -6,6 +6,7 @@ import (
 	"os"
 
 	"github.com/hajimehoshi/ebiten/v2"
+	"github.com/hajimehoshi/ebiten/v2/inpututil"
 	"github.com/hajimehoshi/ebiten/v2/text/v2"
 )
 
@@ -61,42 +62,42 @@ func NewEbitenRenderer(game *Game, fontPath string, fontSize float64) (*EbitenRe
 // Returns error if the game should terminate.
 func (renderer *EbitenRenderer) Update() error {
 	// Up
-	if ebiten.IsKeyPressed(ebiten.KeyArrowUp) || ebiten.IsKeyPressed(ebiten.KeyK) || ebiten.IsKeyPressed(ebiten.KeyNumpad8) {
+	if inpututil.IsKeyJustPressed(ebiten.KeyArrowUp) || inpututil.IsKeyJustPressed(ebiten.KeyK) || inpututil.IsKeyJustPressed(ebiten.KeyNumpad8) {
 		renderer.game.MovePlayer(0, -1)
 	}
 
 	// Down
-	if ebiten.IsKeyPressed(ebiten.KeyArrowDown) || ebiten.IsKeyPressed(ebiten.KeyJ) || ebiten.IsKeyPressed(ebiten.KeyNumpad2) {
+	if inpututil.IsKeyJustPressed(ebiten.KeyArrowDown) || inpututil.IsKeyJustPressed(ebiten.KeyJ) || inpututil.IsKeyJustPressed(ebiten.KeyNumpad2) {
 		renderer.game.MovePlayer(0, 1)
 	}
 
 	// Left
-	if ebiten.IsKeyPressed(ebiten.KeyArrowLeft) || ebiten.IsKeyPressed(ebiten.KeyH) || ebiten.IsKeyPressed(ebiten.KeyNumpad4) {
+	if inpututil.IsKeyJustPressed(ebiten.KeyArrowLeft) || inpututil.IsKeyJustPressed(ebiten.KeyH) || inpututil.IsKeyJustPressed(ebiten.KeyNumpad4) {
 		renderer.game.MovePlayer(-1, 0)
 	}
 
 	// Right
-	if ebiten.IsKeyPressed(ebiten.KeyArrowRight) || ebiten.IsKeyPressed(ebiten.KeyL) || ebiten.IsKeyPressed(ebiten.KeyNumpad6) {
+	if inpututil.IsKeyJustPressed(ebiten.KeyArrowRight) || inpututil.IsKeyJustPressed(ebiten.KeyL) || inpututil.IsKeyJustPressed(ebiten.KeyNumpad6) {
 		renderer.game.MovePlayer(1, 0)
 	}
 
 	// Up left
-	if ebiten.IsKeyPressed(ebiten.KeyHome) || ebiten.IsKeyPressed(ebiten.KeyY) || ebiten.IsKeyPressed(ebiten.KeyNumpad7) {
+	if inpututil.IsKeyJustPressed(ebiten.KeyHome) || inpututil.IsKeyJustPressed(ebiten.KeyY) || inpututil.IsKeyJustPressed(ebiten.KeyNumpad7) {
 		renderer.game.MovePlayer(-1, -1)
 	}
 
 	// Up right
-	if ebiten.IsKeyPressed(ebiten.KeyPageUp) || ebiten.IsKeyPressed(ebiten.KeyU) || ebiten.IsKeyPressed(ebiten.KeyNumpad9) {
+	if inpututil.IsKeyJustPressed(ebiten.KeyPageUp) || inpututil.IsKeyJustPressed(ebiten.KeyU) || inpututil.IsKeyJustPressed(ebiten.KeyNumpad9) {
 		renderer.game.MovePlayer(1, -1)
 	}
 
 	// Down left
-	if ebiten.IsKeyPressed(ebiten.KeyEnd) || ebiten.IsKeyPressed(ebiten.KeyB) || ebiten.IsKeyPressed(ebiten.KeyNumpad1) {
+	if inpututil.IsKeyJustPressed(ebiten.KeyEnd) || inpututil.IsKeyJustPressed(ebiten.KeyB) || inpututil.IsKeyJustPressed(ebiten.KeyNumpad1) {
 		renderer.game.MovePlayer(-1, 1)
 	}
 
 	// Down right
-	if ebiten.IsKeyPressed(ebiten.KeyPageDown) || ebiten.IsKeyPressed(ebiten.KeyN) || ebiten.IsKeyPressed(ebiten.KeyNumpad3) {
+	if inpututil.IsKeyJustPressed(ebiten.KeyPageDown) || inpututil.IsKeyJustPressed(ebiten.KeyN) || inpututil.IsKeyJustPressed(ebiten.KeyNumpad3) {
 		renderer.game.MovePlayer(1, 1)
 	}
 
