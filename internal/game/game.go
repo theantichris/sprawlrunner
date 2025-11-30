@@ -1,6 +1,13 @@
 // Package game contains core game state and logic independent of rendering.
 package game
 
+import "image/color"
+
+const (
+	mapWidth  = 80
+	mapHeight = 24
+)
+
 // Game holds the current game state including map and entities.
 type Game struct {
 	Width  int      // Width describes the horizontal map dimensions in tiles.
@@ -12,19 +19,17 @@ type Game struct {
 // NewGame creates a new Game with three rooms connected by corridors.
 // The game map is fixed at 80x24 to match the hardcoded room layout.
 func NewGame() *Game {
-	const width = 80
-	const height = 24
-
 	game := &Game{
-		Width:  width,
-		Height: height,
-		Tiles:  make([][]Tile, height),
+		Width:  mapWidth,
+		Height: mapHeight,
+		Tiles:  make([][]Tile, mapHeight),
 		Player: Player{
 			Glyph: '@',
+			Color: color.White,
 		},
 	}
 
-	game.initializeMap(width, height)
+	game.initializeMap(mapWidth, mapHeight)
 
 	return game
 }
