@@ -7,7 +7,9 @@ import (
 )
 
 func TestNewEbitenRenderer(t *testing.T) {
-	renderer, err := NewEbitenRenderer(mapWidth, mapHeight, fontGoMono, tileSize)
+	game := NewGame()
+
+	renderer, err := NewEbitenRenderer(game, fontGoMono, tileSize)
 	if err != nil {
 		t.Fatalf("failed to create renderer: %v", err)
 	}
@@ -28,7 +30,9 @@ func TestNewEbitenRenderer(t *testing.T) {
 }
 
 func TestRenderTile(t *testing.T) {
-	renderer, err := NewEbitenRenderer(mapWidth, mapHeight, fontGoMono, tileSize)
+	game := NewGame()
+
+	renderer, err := NewEbitenRenderer(game, fontGoMono, tileSize)
 	if err != nil {
 		t.Fatalf("failed to create renderer: %v", err)
 	}
@@ -40,12 +44,13 @@ func TestRenderTile(t *testing.T) {
 }
 
 func TestRenderMap(t *testing.T) {
-	renderer, err := NewEbitenRenderer(mapWidth, mapHeight, fontGoMono, tileSize)
+	game := NewGame()
+
+	renderer, err := NewEbitenRenderer(game, fontGoMono, tileSize)
 	if err != nil {
 		t.Fatalf("failed to create renderer: %v", err)
 	}
 
-	game := NewGame()
 	testImage := ebiten.NewImage(renderer.screenWidth, renderer.screenHeight)
 
 	// Verify method exists and does not panic.
@@ -53,12 +58,13 @@ func TestRenderMap(t *testing.T) {
 }
 
 func TestRenderPlayer(t *testing.T) {
-	renderer, err := NewEbitenRenderer(mapWidth, mapHeight, fontGoMono, tileSize)
+	game := NewGame()
+
+	renderer, err := NewEbitenRenderer(game, fontGoMono, tileSize)
 	if err != nil {
 		t.Fatalf("failed to create renderer: %v", err)
 	}
 
-	game := NewGame()
 	testImage := ebiten.NewImage(renderer.screenWidth, renderer.screenHeight)
 
 	// Verify method exists and does not panic.
@@ -66,12 +72,13 @@ func TestRenderPlayer(t *testing.T) {
 }
 
 func TestHandleInput(t *testing.T) {
-	renderer, err := NewEbitenRenderer(mapWidth, mapHeight, fontGoMono, tileSize)
+	game := NewGame()
+
+	renderer, err := NewEbitenRenderer(game, fontGoMono, tileSize)
 	if err != nil {
 		t.Fatalf("failed to create renderer: %v", err)
 	}
 
-	game := NewGame()
 	renderer.game = game
 
 	initX := game.Player.X

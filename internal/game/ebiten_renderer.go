@@ -23,17 +23,16 @@ type EbitenRenderer struct {
 	game         *Game
 }
 
-// NewEbitenRenderer creates a new Ebiten based renderer for the given map
-// dimensions.
-// mapWidth and mapHeight are in tiles, which are converted to pixels based on
-// tileSize.
+// NewEbitenRenderer creates a new Ebiten renderer for the given game.
+// Screen dimensions are derived from the game's map size.
 // fontPath specifies the TrueType font file to use and fontSize is in points.
-// Returns an error if the font cannot be loaded.
-func NewEbitenRenderer(mapWidth, mapHeight int, fontPath string, fontSize float64) (*EbitenRenderer, error) {
+// Returns an error if font cannot be loaded.
+func NewEbitenRenderer(game *Game, fontPath string, fontSize float64) (*EbitenRenderer, error) {
 	renderer := &EbitenRenderer{
-		screenWidth:  mapWidth * tileSize,
-		screenHeight: mapHeight * tileSize,
+		screenWidth:  game.Width * tileSize,
+		screenHeight: game.Height * tileSize,
 		tileSize:     tileSize,
+		game:         game,
 	}
 
 	fontData, err := os.Open(fontPath)
@@ -61,10 +60,6 @@ func NewEbitenRenderer(mapWidth, mapHeight int, fontPath string, fontSize float6
 // Update updates the game state. Required by ebiten.Game interface.
 // Returns error if the game should terminate.
 func (renderer *EbitenRenderer) Update() error {
-	if renderer.game == nil {
-		return nil
-	}
-
 	// Up
 	if ebiten.IsKeyPressed(ebiten.KeyArrowUp) || ebiten.IsKeyPressed(ebiten.KeyK) || ebiten.IsKeyPressed(ebiten.KeyNumpad8) {
 		renderer.game.MovePlayer(0, -1)
@@ -115,10 +110,6 @@ func (renderer *EbitenRenderer) Update() error {
 
 // Draw renders the game state to the screen. Required by ebiten.Game interface.
 func (renderer *EbitenRenderer) Draw(screen *ebiten.Image) {
-	if renderer.game == nil {
-		return
-	}
-
 	screen.Fill(color.Black) // Clear screen to black
 	renderer.RenderMap(screen, renderer.game)
 	renderer.RenderPlayer(screen, renderer.game.Player)
