@@ -23,5 +23,13 @@ jobs:
       - name: Build
         run: go build -v ./...
 
+      - name: Start xvfb
+        run: |
+          export DISPLAY=:99
+          /usr/bin/Xvfb :99 -screen 0 1024x768x24 > /dev/null 2>&1 &
+          sleep 3
+
       - name: Test
+        env:
+          DISPLAY: :99
         run: go test -v ./...
