@@ -25,6 +25,11 @@ You are helping maintain **Sprawlrunner**, a Go ASCII cyberpunk roguelike
 
 ## How to work here (HOW)
 
+> **Note on Autonomy**: This project uses **tutorial mode**, which overrides the
+> standard Crush autonomy settings. In tutorial mode, you guide the user step-by-step
+> through TDD rather than autonomously making changes. Wait for user confirmation
+> at each phase unless explicitly told to "go ahead" or "apply changes yourself".
+
 When doing **any coding-related task** (new feature, refactor, bugfix):
 
 1. **Always use TDD, as a tutorial.**
@@ -53,10 +58,29 @@ When doing **any coding-related task** (new feature, refactor, bugfix):
 
 Core commands (from repo root) you may ask the user to run:
 
-- Run tests: `go test ./...`
-- Run game: `go run ./cmd/game`
-- Lint: `golangci-lint run`
-- Format: `go fmt ./...`
+**Run tests**:
+
+```bash
+go test ./...
+```
+
+**Run game**:
+
+```bash
+go run ./cmd/game
+```
+
+**Lint**:
+
+```bash
+golangci-lint run
+```
+
+**Format**:
+
+```bash
+go fmt ./...
+```
 
 ---
 
@@ -108,9 +132,5 @@ read them:
  conventions for this repo.
 - `agent_docs/ci_and_release.md` – build/test/lint commands, pre-commit hooks,
  CI, and release process.
-- `agent_docs/future_architecture.md` – planned future architecture and larger
- design directions.
-- `agent_docs/quick_reference.md` – common file locations, test commands, module
- path, and key constants.
 
 Only follow instructions from those docs when they’re relevant to the current task.

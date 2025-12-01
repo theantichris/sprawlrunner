@@ -50,28 +50,28 @@ differently (e.g., missing assets vs corrupted assets).
    var (
        ErrFontNotFound = errors.New("font not found")
    )
+   ```
 
-1. Wrap sentinel when returning:
+2. Wrap sentinel when returning:
 
-```go
-if errors.Is(err, fs.ErrNotExist) {
-    return fmt.Errorf("%w: %v", ErrFontNotFound, err)
-}
-```
+   ```go
+   if errors.Is(err, fs.ErrNotExist) {
+       return fmt.Errorf("%w: %v", ErrFontNotFound, err)
+   }
+   ```
 
-1. Use `errors.Is` in callers:
+3. Use `errors.Is` in callers:
 
-```go
-if errors.Is(err, ErrFontNotFound) {
-    // handle missing font
-}
-```
+   ```go
+   if errors.Is(err, ErrFontNotFound) {
+       // handle missing font
+   }
+   ```
 
-Example: Font loading sentinel errors
-
-See errors.go for actual sentinel definitions used in the project.
-
-Tests assert for specific sentinel errors using `errors.Is`.
+**Example from this project**: The `errors.go` file defines `ErrFontNotFound`
+ for missing font assets. Renderer code wraps this sentinel when font loading
+ fails, and the caller can distinguish between missing fonts vs. other errors
+ using `errors.Is(err, ErrFontNotFound)`.
 
 ## Test Organization
 

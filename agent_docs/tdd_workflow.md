@@ -84,3 +84,129 @@ When asked to implement or change something, follow this **exact sequence**:
   - If the code feels messy, refactor while tests protect you.
 - **Using giant test fixtures.**
   - Build only the minimum state needed for each test.
+
+## Complete TDD Example: Adding Blocked Movement
+
+Here's a full RED → GREEN → REFACTOR cycle for preventing player movement into walls.
+
+### Phase 1: RED (Write Failing Test)
+
+**File**: `internal/game/player_test.go`
+
+```go
+func TestPlayerCannotMoveIntoWall(t *testing.T) {
+    g := NewGame(10, 10)
+    g.Tiles[5][5] = TileWall    // Place wall at (5, 5)
+    g.Player.X = 4               // Player at (4, 5)
+    g.Player.Y = 5
+
+    err := g.MovePlayer(1, 0)   // Try to move right into wall
+
+    if err == nil {
+        t.Fatal("expected error when moving into wall, got nil")
+    }
+    if g.Player.X != 4 || g.Player.Y != 5 {
+        t.Errorf("player moved when it shouldn't: got (%d,%d), want (4,5)",
+            g.Player.X, g.Player.Y)
+    }
+}
+```
+
+**Run**:
+
+```bash
+go test -v ./internal/game -run TestPlayerCannotMoveIntoWall
+```
+
+**Expected output** (RED):
+
+```text
+--- FAIL: TestPlayerCannotMoveIntoWall (0.00s)
+    player_test.go:42: expected error when moving into wall, got nil
+FAIL
+```
+
+### Phase 2: GREEN (Minimal Implementation)
+
+**File**: `internal/game/game.go`
+
+```go
+func (g *Game) MovePlayer(dx, dy int) error {
+    newX := g.Player.X + dx
+    newY := g.Player.Y + dy
+
+    // Check bounds
+    if newX < 0 || newX >= g.Width || newY < 0 || newY >= g.Height {
+        return fmt.Errorf("move out of bounds")
+    }
+
+    // Check if walkable
+    if !g.Tiles[newY][newX].Walkable {
+        return fmt.Errorf("cannot move into blocked tile")
+    }
+
+    g.Player.X = newX
+    g.Player.Y = newY
+    return nil
+}
+```
+
+**Run**:
+
+```bash
+go test -v ./internal/game -run TestPlayerCannotMoveIntoWall
+```
+
+**Expected output** (GREEN):
+
+```text
+--- PASS: TestPlayerCannotMoveIntoWall (0.00s)
+PASS
+ok      github.com/theantichris/sprawlrunner/internal/game      0.003s
+```
+
+### Phase 3: REFACTOR (Improve Code Quality)
+
+**Improvement**: Extract collision check to a helper for reuse.
+
+**File**: `internal/game/game.go`
+
+```go
+func (g *Game) isWalkable(x, y int) bool {
+    if x < 0 || x >= g.Width || y < 0 || y >= g.Height {
+        return false
+    }
+    return g.Tiles[y][x].Walkable
+}
+
+func (g *Game) MovePlayer(dx, dy int) error {
+    newX := g.Player.X + dx
+    newY := g.Player.Y + dy
+
+    if !g.isWalkable(newX, newY) {
+        return fmt.Errorf("cannot move to (%d,%d)", newX, newY)
+    }
+
+    g.Player.X = newX
+    g.Player.Y = newY
+    return nil
+}
+```
+
+**Run**:
+
+```bash
+go test -v ./internal/game
+```
+
+**Expected output** (still GREEN):
+
+```text
+--- PASS: TestPlayerCannotMoveIntoWall (0.00s)
+--- PASS: TestNewGameInitializesPlayer (0.00s)
+--- PASS: TestPlayerCanMoveInBounds (0.00s)
+PASS
+ok      github.com/theantichris/sprawlrunner/internal/game      0.004s
+```
+
+**Summary**: We now have a clean, tested implementation with a reusable helper.

@@ -31,12 +31,25 @@ sprawlrunner/
 ├── assets/
 │   └── fonts/
 │       └── Go-Mono.ttf          # Required font asset (monospaced)
+├── agent_docs/                  # Agent documentation
+│   ├── project_overview.md      # This file - full project structure
+│   ├── tdd_workflow.md          # TDD tutorial workflow and examples
+│   ├── code_conventions.md      # Go style and error handling patterns
+│   └── ci_and_release.md        # Build, test, lint, and release commands
 ├── .github/
 │   └── workflows/
-│       └── ci.yml               # CI configuration (tests, lint, build)
+│       ├── go.yml               # CI configuration (tests, lint, build)
+│       ├── markdown.yml         # Markdown linting
+│       └── release.yml          # Release automation with GoReleaser
+├── .gitignore                   # Git ignore patterns
 ├── .golangci.yml                # golangci-lint configuration
-├── .pre-commit-config.yaml      # Pre-commit hooks
+├── .goreleaser.yaml             # GoReleaser configuration for builds
+├── .pre-commit-config.yaml      # Pre-commit hooks (gofmt, golangci-lint)
+├── .codespellrc                 # Spell-check configuration
+├── .harper-dictionary.txt       # Custom dictionary for spell-check
+├── AGENTS.md                    # Agent guide (entry point)
+├── README.md                    # Project README
+├── LICENSE                      # Project license
 ├── go.mod                       # Go module definition
-├── go.sum                       # Module checksums
-└── AGENTS.md                    # Agent guide
+└── go.sum                       # Module checksums
 ```
