@@ -161,6 +161,139 @@ Ebitengine creates OpenGL contexts even in tests.
 - **Resource cleanup**: Use `defer` for cleanup (see ebiten_renderer.go:44-46)
 - **Error returns**: Functions that can fail return `error` as last return value
 
+#### Sentinel Errors
+
+**What are sentinel errors?**
+
+Sentinel errors are predefined package-level error values that allow callers to
+identify specific error conditions using `errors.Is()`. They enable better error
+handling and more helpful error messages.
+
+**When to use sentinel errors:**
+
+✅ **Use sentinel errors when:**
+
+- Callers need to distinguish between different failure modes
+- Different error types require different handling/recovery strategies
+- Users need specific error messages for different failures
+- Low-frequency operations where failure needs explicit handling
+
+❌ **Don't use sentinel errors when:**
+
+- Silent failures are acceptable (e.g., movement blocked by wall)
+- High-frequency operations where errors are expected/normal
+- All error conditions should be handled the same way
+- The consequence of failure is obvious without an error
+
+**Current sentinel errors in the codebase:**
+
+```go
+// internal/game/ebiten_renderer.go
+var (
+    ErrFontNotFound    = errors.New("font file not found")
+    ErrFontParseFailed = errors.New("font file could not be parsed")
+)
+```
+
+##### Pattern: Define and use sentinel errors
+
+1. **Define** at package level using `errors.New()`:
+
+   ```go
+   var (
+       ErrSpecificFailure = errors.New("description of failure")
+       ErrOtherFailure    = errors.New("description of other failure")
+   )
+   ```
+
+1. **Return** using `errors.Join()` to preserve both sentinel and
+   wrapped error:
+
+   ```go
+   func LoadResource(path string) error {
+       file, err := os.Open(path)
+       if err != nil {
+           return fmt.Errorf("failed to open: %w",
+               errors.Join(ErrResourceNotFound, err))
+       }
+       // ...
+   }
+   ```
+
+1. **Check** using `errors.Is()` in callers:
+
+   ```go
+   if err := LoadResource("file.txt"); err != nil {
+       if errors.Is(err, ErrResourceNotFound) {
+           // Handle missing file specifically
+           log.Error("Please install file.txt in the assets directory")
+       } else {
+           // Handle other errors
+           log.Errorf("Unexpected error: %v", err)
+       }
+   }
+   ```
+
+1. **Test** using table-driven tests:
+
+   ```go
+   func TestResourceNotFound(t *testing.T) {
+       err := LoadResource("nonexistent.txt")
+       if err == nil {
+           t.Fatal("expected error for nonexistent file, got nil")
+       }
+
+       if !errors.Is(err, ErrResourceNotFound) {
+           t.Errorf("expected ErrResourceNotFound, got %v", err)
+       }
+   }
+   ```
+
+##### Example: Font loading sentinel errors
+
+The font loading code uses sentinel errors to distinguish "file not found" from
+"invalid font format":
+
+```go
+// ebiten_renderer.go
+fontData, err := os.Open(fontPath)
+if err != nil {
+    return nil, fmt.Errorf("failed to open font file: %w",
+        errors.Join(ErrFontNotFound, err))
+}
+
+fontSource, err := text.NewGoTextFaceSource(fontData)
+if err != nil {
+    return nil, fmt.Errorf("failed to parse font: %w",
+        errors.Join(ErrFontParseFailed, err))
+}
+```
+
+This allows main.go to provide helpful error messages:
+
+```go
+renderer, err := game.NewEbitenRenderer(g, fontPath, fontSize)
+if err != nil {
+    if errors.Is(err, game.ErrFontNotFound) {
+        logger.Fatal("Font file missing - please install " +
+            "Go-Mono.ttf in assets/fonts/")
+    }
+    logger.Fatalf("Failed to create renderer: %v", err)
+}
+```
+
+##### Design decision: Movement validation
+
+The `MovePlayer()` function deliberately does NOT return errors for blocked
+movement because:
+
+- Movement attempts are high-frequency (every keypress)
+- The consequence is obvious (player doesn't move)
+- No caller needs to distinguish "why" the move failed
+- Silent failure provides simpler API for renderer layer
+
+This is a valid design choice - not all validation failures need sentinel errors.
+
 ### Testing Patterns
 
 **Table-Driven Tests** (preferred pattern in this codebase):
