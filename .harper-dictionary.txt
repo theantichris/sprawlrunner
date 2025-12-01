@@ -2,6 +2,7 @@ ADOM
 CD
 Ebiten
 EbitenRenderer
+Ebitengine
 LoadFont
 MovePlayer
 Nav
