@@ -1,7 +1,10 @@
 ADOM
 CD
+Charmbracelet
 Ebiten
 EbitenRenderer
+Ebitengine
+Ebitengine's
 LoadFont
 MovePlayer
 Nav
@@ -34,5 +37,6 @@ tileSize
 tileX
 tileY
 u
+v2
 x24
 x8
