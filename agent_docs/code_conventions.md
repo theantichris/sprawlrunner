@@ -50,3 +50,19 @@ differently (e.g., missing assets vs corrupted assets).
    var (
        ErrFontNotFound = errors.New("font not found")
    )
+
+1. Wrap sentinel when returning:
+
+```go
+if errors.Is(err, fs.ErrNotExist) {
+    return fmt.Errorf("%w: %v", ErrFontNotFound, err)
+}
+```
+
+1. Use `errors.Is` in callers:
+
+```go
+if errors.Is(err, ErrFontNotFound) {
+    // handle missing font
+}
+```
