@@ -145,7 +145,7 @@ func TestFontFileNotFound(t *testing.T) {
 func TestFontParseFailed(t *testing.T) {
 	game := NewGame()
 
-	tempFile := "/tmp/invalid_font.tff"
+	tempFile := "/tmp/invalid_font.ttf"
 	err := os.WriteFile(tempFile, []byte("not a valid font file"), 0644)
 	if err != nil {
 		t.Fatalf("failed to create test file: %v", err)
