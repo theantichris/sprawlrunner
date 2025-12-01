@@ -66,3 +66,17 @@ if errors.Is(err, ErrFontNotFound) {
     // handle missing font
 }
 ```
+
+Example: Font loading sentinel errors
+
+See errors.go for actual sentinel definitions used in the project.
+
+Tests assert for specific sentinel errors using `errors.Is`.
+
+## Test Organization
+
+Keep tests in *_test.go files next to the code they test.
+
+Group related tests in the same file for readability.
+
+Use table-driven tests for combinations of inputs and expected outputs.
