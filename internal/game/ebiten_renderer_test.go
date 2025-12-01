@@ -1,6 +1,8 @@
 package game
 
 import (
+	"errors"
+	"os"
 	"testing"
 
 	"github.com/hajimehoshi/ebiten/v2"
@@ -124,5 +126,41 @@ func TestSinglePressMovement(t *testing.T) {
 	// Player shouldn't have moved (no key pressed in test)
 	if renderer.game.Player.X != initX || renderer.game.Player.Y != initY {
 		t.Errorf("player position changed unexpectedly: got (%d, %d), want (%d, %d)", renderer.game.Player.X, renderer.game.Player.Y, initX, initY)
+	}
+}
+
+func TestFontFileNotFound(t *testing.T) {
+	game := NewGame()
+
+	_, err := NewEbitenRenderer(game, "nofont.ttf", tileSize)
+	if err == nil {
+		t.Fatal("expected error for nonexistent font file, got nil")
+	}
+
+	if !errors.Is(err, ErrFontNotFound) {
+		t.Errorf("expected %v, got %v", ErrFontNotFound, err)
+	}
+}
+
+func TestFontParseFailed(t *testing.T) {
+	game := NewGame()
+
+	tempFile := "/tmp/invalid_font.tff"
+	err := os.WriteFile(tempFile, []byte("not a valid font file"), 0644)
+	if err != nil {
+		t.Fatalf("failed to create test file: %v", err)
+	}
+
+	defer func() {
+		_ = os.Remove(tempFile)
+	}()
+
+	_, err = NewEbitenRenderer(game, tempFile, tileSize)
+	if err == nil {
+		t.Fatal("expected error for invalid font file, got nil")
+	}
+
+	if !errors.Is(err, ErrFontParseFailed) {
+		t.Errorf("expected %v, got %v", ErrFontParseFailed, err)
 	}
 }

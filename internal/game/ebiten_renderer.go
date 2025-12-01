@@ -38,7 +38,7 @@ func NewEbitenRenderer(game *Game, fontPath string, fontSize float64) (*EbitenRe
 
 	fontData, err := os.Open(fontPath)
 	if err != nil {
-		return nil, fmt.Errorf("failed to open font file: %w", err)
+		return nil, fmt.Errorf("%w: %w", ErrFontNotFound, err)
 	}
 
 	defer func() {
@@ -47,7 +47,7 @@ func NewEbitenRenderer(game *Game, fontPath string, fontSize float64) (*EbitenRe
 
 	fontSource, err := text.NewGoTextFaceSource(fontData)
 	if err != nil {
-		return nil, fmt.Errorf("failed to parse font: %w", err)
+		return nil, fmt.Errorf("%w: %w", ErrFontParseFailed, err)
 	}
 
 	renderer.fontFace = &text.GoTextFace{
