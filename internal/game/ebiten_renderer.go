@@ -1,6 +1,7 @@
 package game
 
 import (
+	"errors"
 	"fmt"
 	"image/color"
 	"os"
@@ -38,7 +39,7 @@ func NewEbitenRenderer(game *Game, fontPath string, fontSize float64) (*EbitenRe
 
 	fontData, err := os.Open(fontPath)
 	if err != nil {
-		return nil, fmt.Errorf("%w: %w", ErrFontNotFound, err)
+		return nil, fmt.Errorf("%w", errors.Join(ErrFontNotFound, err))
 	}
 
 	defer func() {
@@ -47,7 +48,7 @@ func NewEbitenRenderer(game *Game, fontPath string, fontSize float64) (*EbitenRe
 
 	fontSource, err := text.NewGoTextFaceSource(fontData)
 	if err != nil {
-		return nil, fmt.Errorf("%w: %w", ErrFontParseFailed, err)
+		return nil, fmt.Errorf("%w", errors.Join(ErrFontParseFailed, err))
 	}
 
 	renderer.fontFace = &text.GoTextFace{
