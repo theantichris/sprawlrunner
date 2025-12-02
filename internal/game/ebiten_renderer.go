@@ -12,7 +12,7 @@ import (
 )
 
 const (
-	tileSize   = 16 // 16 pixels per tile
+	tileSize   = 16
 	fontGoMono = "../../assets/fonts/Go-Mono.ttf"
 )
 
