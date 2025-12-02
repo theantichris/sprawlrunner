@@ -130,6 +130,10 @@ func (renderer *EbitenRenderer) Draw(screen *ebiten.Image) {
 	screen.Fill(color.Black) // Clear screen to black
 	renderer.RenderMap(screen, renderer.game)
 	renderer.RenderPlayer(screen, renderer.game.Player)
+
+	if renderer.game.IsConfirmingQuit() {
+		renderer.RenderQuitPrompt(screen)
+	}
 }
 
 // Layout returns the game's logical screen size. Required by ebiten.Game interface.
@@ -172,4 +176,19 @@ func (renderer *EbitenRenderer) RenderMap(screen *ebiten.Image, game *Game) {
 			renderer.RenderTile(screen, tile, x, y)
 		}
 	}
+}
+
+// RenderQuitPrompt draws the quit confirmation dialog.
+func (renderer *EbitenRenderer) RenderQuitPrompt(screen *ebiten.Image) {
+	prompt := "Really quit? (Y/N)"
+
+	// Center horizontally, place near top
+	promptX := float64(renderer.screenWidth/2 - len(prompt)*renderer.tileSize/4)
+	promptY := float64(renderer.tileSize * 2)
+
+	options := &text.DrawOptions{}
+	options.GeoM.Translate(promptX, promptY)
+	options.ColorScale.ScaleWithColor(color.RGBA{R: 255, G: 255, B: 0, A: 255}) // Yellow
+
+	text.Draw(screen, prompt, renderer.fontFace, options)
 }
