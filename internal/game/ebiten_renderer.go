@@ -182,9 +182,8 @@ func (renderer *EbitenRenderer) RenderMap(screen *ebiten.Image, game *Game) {
 func (renderer *EbitenRenderer) RenderQuitPrompt(screen *ebiten.Image) {
 	prompt := "Really quit? (Y/N)"
 
-	// Center horizontally, place near top
-	promptX := float64(renderer.screenWidth/2 - len(prompt)*renderer.tileSize/4)
-	promptY := float64(renderer.tileSize * 2)
+	promptX := float64(renderer.tileSize)
+	promptY := float64(renderer.screenHeight - renderer.tileSize*2)
 
 	options := &text.DrawOptions{}
 	options.GeoM.Translate(promptX, promptY)
