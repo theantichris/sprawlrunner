@@ -10,10 +10,11 @@ const (
 
 // Game holds the current game state including map and entities.
 type Game struct {
-	Width  int      // Width describes the horizontal map dimensions in tiles.
-	Height int      // Height describes the vertical map dimensions in tiles.
-	Tiles  [][]Tile // Tiles is a 2D grid of map tiles indexed as Tiles[y][x].
-	Player Player   // Player represents the runner controlled by the user.
+	Width          int      // Width describes the horizontal map dimensions in tiles
+	Height         int      // Height describes the vertical map dimensions in tiles
+	Tiles          [][]Tile // Tiles is a 2D grid of map tiles indexed as Tiles[y][x]
+	Player         Player   // Player represents the runner controlled by the user
+	confirmingQuit bool     // confirmingQuit tracks whether the game is waiting for quit confirmation.
 }
 
 // NewGame creates a new Game with three rooms connected by corridors.
@@ -103,4 +104,22 @@ func (game *Game) CreateCorridor(x1, y1, x2, y2 int) {
 	for y := min(y1, y2); y <= max(y1, y2); y++ {
 		game.Tiles[y][x2] = FloorTile
 	}
+}
+
+// RequestQuit enters the quit confirmation state.
+func (game *Game) RequestQuit() {
+	game.confirmingQuit = true
+}
+
+// IsConfirmingQuit returns true if the game is waiting for quit confirmation.
+func (game *Game) IsConfirmingQuit() bool {
+	return game.confirmingQuit
+}
+
+// ConfirmQuit handles the user's response to the quit confirmation.
+// Returns true if the game should exit, false otherwise.
+func (game *Game) ConfirmQuit(confirmed bool) bool {
+	game.confirmingQuit = false
+
+	return confirmed
 }

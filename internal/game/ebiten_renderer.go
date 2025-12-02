@@ -12,7 +12,7 @@ import (
 )
 
 const (
-	tileSize   = 16 // 16 pixels per tile
+	tileSize   = 16
 	fontGoMono = "../../assets/fonts/Go-Mono.ttf"
 )
 
@@ -62,6 +62,26 @@ func NewEbitenRenderer(game *Game, fontPath string, fontSize float64) (*EbitenRe
 // Update updates the game state. Required by ebiten.Game interface.
 // Returns error if the game should terminate.
 func (renderer *EbitenRenderer) Update() error {
+	// Quit
+	if ebiten.IsKeyPressed(ebiten.KeyShift) && ebiten.IsKeyPressed(ebiten.KeyQ) {
+		renderer.game.RequestQuit()
+	}
+
+	// Handle quit confirmation if active
+	if renderer.game.IsConfirmingQuit() {
+		if inpututil.IsKeyJustPressed(ebiten.KeyY) {
+			if renderer.game.ConfirmQuit(true) {
+				return ebiten.Termination
+			}
+		}
+
+		if inpututil.IsKeyJustPressed(ebiten.KeyN) {
+			renderer.game.ConfirmQuit(false)
+		}
+
+		return nil
+	}
+
 	// Up
 	if inpututil.IsKeyJustPressed(ebiten.KeyArrowUp) || inpututil.IsKeyJustPressed(ebiten.KeyK) || inpututil.IsKeyJustPressed(ebiten.KeyNumpad8) {
 		renderer.game.MovePlayer(0, -1)
@@ -102,11 +122,6 @@ func (renderer *EbitenRenderer) Update() error {
 		renderer.game.MovePlayer(1, 1)
 	}
 
-	// Quit
-	if ebiten.IsKeyPressed(ebiten.KeyShift) && ebiten.IsKeyPressed(ebiten.KeyQ) {
-		return ebiten.Termination
-	}
-
 	return nil
 }
 
@@ -115,6 +130,10 @@ func (renderer *EbitenRenderer) Draw(screen *ebiten.Image) {
 	screen.Fill(color.Black) // Clear screen to black
 	renderer.RenderMap(screen, renderer.game)
 	renderer.RenderPlayer(screen, renderer.game.Player)
+
+	if renderer.game.IsConfirmingQuit() {
+		renderer.RenderQuitPrompt(screen)
+	}
 }
 
 // Layout returns the game's logical screen size. Required by ebiten.Game interface.
@@ -157,4 +176,18 @@ func (renderer *EbitenRenderer) RenderMap(screen *ebiten.Image, game *Game) {
 			renderer.RenderTile(screen, tile, x, y)
 		}
 	}
+}
+
+// RenderQuitPrompt draws the quit confirmation dialog.
+func (renderer *EbitenRenderer) RenderQuitPrompt(screen *ebiten.Image) {
+	prompt := "Really quit? (Y/N)"
+
+	promptX := float64(renderer.tileSize)
+	promptY := float64(renderer.screenHeight - renderer.tileSize*2)
+
+	options := &text.DrawOptions{}
+	options.GeoM.Translate(promptX, promptY)
+	options.ColorScale.ScaleWithColor(colorYellow)
+
+	text.Draw(screen, prompt, renderer.fontFace, options)
 }

@@ -334,3 +334,47 @@ func TestCreateCorridor(t *testing.T) {
 		})
 	}
 }
+
+func TestQuitConfirmation(t *testing.T) {
+	game := NewGame()
+
+	if game.IsConfirmingQuit() {
+		t.Fatal("new game should not be confirming quit")
+	}
+
+	game.RequestQuit()
+
+	if !game.IsConfirmingQuit() {
+		t.Error("game should be confirming quit after RequestQuit()")
+	}
+}
+
+func TestConfirmQuitExitsGame(t *testing.T) {
+	game := NewGame()
+	game.RequestQuit()
+
+	shouldQuit := game.ConfirmQuit(true)
+
+	if !shouldQuit {
+		t.Error("ConfirmQuit(true) should return true to exit, got false")
+	}
+
+	if game.IsConfirmingQuit() {
+		t.Error("game should not be confirming quit after confirmation")
+	}
+}
+
+func TestCancelQuitReturnsToGame(t *testing.T) {
+	game := NewGame()
+	game.RequestQuit()
+
+	shouldQuit := game.ConfirmQuit(false)
+
+	if shouldQuit {
+		t.Error("ConfirmQuit(false) should return false to stay in game")
+	}
+
+	if game.IsConfirmingQuit() {
+		t.Error("game should not be confirming quit after cancellation")
+	}
+}

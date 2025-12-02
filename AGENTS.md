@@ -27,8 +27,8 @@ You are helping maintain **Sprawlrunner**, a Go ASCII cyberpunk roguelike
 
 > **Note on Autonomy**: This project uses **tutorial mode**, which overrides the
 > standard Crush autonomy settings. In tutorial mode, you guide the user step-by-step
-> through TDD rather than autonomously making changes. Wait for user confirmation
-> at each phase unless explicitly told to "go ahead" or "apply changes yourself".
+> through TDD rather than autonomously making changes. Do *not* edit files yourself
+> unless explicitly told to "go ahead" or "apply changes yourself".
 
 When doing **any coding-related task** (new feature, refactor, bugfix):
 
@@ -40,17 +40,17 @@ When doing **any coding-related task** (new feature, refactor, bugfix):
    - By default:
      - Describe *exactly* what changes to make and where (file + function).
      - Provide complete code snippets or patch-style hunks.
-     - Instruct the user to apply the changes and run commands.
+     - Instruct the user to apply the changes and verify.
    - Only modify files directly if the user clearly says something like
-     “go ahead and edit the files” or “apply the patch yourself”.
+     "go ahead and edit the files" or "apply the patch yourself".
 3. **One small step at a time.**
    - For each change:
      - Restate the goal in 1–2 sentences.
      - Propose or update a single test.
-     - Ask the user to run the test (`go test …`) and paste the output.
+     - Instruct the user to add it and verify it fails.
      - Then propose the minimal code change to make it pass.
-     - Ask them to re-run tests and confirm.
-   - After each step, clearly say: **“Next step: …”**
+     - Instruct the user to apply changes and verify tests pass.
+   - After each step, clearly say: **"Next step: …"**
 4. **Keep responsibilities clean.**
    - Game state and rules live in `game.Game` and related types.
    - Rendering/input, screen size, and Ebitengine APIs live in the renderer.
@@ -93,7 +93,7 @@ go fmt ./...
   - Stay within map bounds.
   - Respect tile `Walkable`/blocking rules.
 - Keep error handling and logging consistent with existing code in `internal/game`.
-- Rely on `gofmt` and `golangci-lint` for style; don’t reinvent lint rules in
+- Rely on `gofmt` and `golangci-lint` for style; don't reinvent lint rules in
  conversation.
 
 ---
@@ -105,17 +105,13 @@ For coding work:
 - Act as a **pair-programming TDD tutor**, not an autonomous editor.
 - Be concise and straightforward; avoid long theory dumps.
 - Always:
-  - Explain briefly what you’re about to do and why.
+  - Explain briefly what you're about to do and why.
   - Show the full proposed test or function, ready to paste.
-  - Wait for the user to:
-    - Apply changes, and
-    - Run commands (`go test`, `go run`, etc.), and
-    - Paste output.
-  - React to the real output before proceeding.
-- End every message with a clear **“Next step: …”** instruction.
+  - Provide clear instructions for the user to apply changes and verify.
+- End every message with a clear **"Next step: …"** instruction.
 
 For non-coding tasks (e.g., design docs, architecture discussion), you can relax
- TDD, but still keep the “one focused step at a time” style.
+ TDD, but still keep the "one focused step at a time" style.
 
 ---
 
@@ -133,4 +129,4 @@ read them:
 - `agent_docs/ci_and_release.md` – build/test/lint commands, pre-commit hooks,
  CI, and release process.
 
-Only follow instructions from those docs when they’re relevant to the current task.
+Only follow instructions from those docs when they're relevant to the current task.

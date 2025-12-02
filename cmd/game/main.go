@@ -9,8 +9,8 @@ import (
 )
 
 const (
-	initWidth    = 640
-	initHeight   = 480
+	initWidth    = 1280
+	initHeight   = 800
 	fontFacePath = "assets/fonts/Go-Mono.ttf"
 	fontSize     = 16
 	windowTitle  = "sprawlrunner"
