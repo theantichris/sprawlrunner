@@ -349,7 +349,7 @@ func TestQuitConfirmation(t *testing.T) {
 	}
 }
 
-func TestConfirmQuitExistsGame(t *testing.T) {
+func TestConfirmQuitExitsGame(t *testing.T) {
 	game := NewGame()
 	game.RequestQuit()
 
