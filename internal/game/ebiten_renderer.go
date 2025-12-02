@@ -62,6 +62,26 @@ func NewEbitenRenderer(game *Game, fontPath string, fontSize float64) (*EbitenRe
 // Update updates the game state. Required by ebiten.Game interface.
 // Returns error if the game should terminate.
 func (renderer *EbitenRenderer) Update() error {
+	// Quit
+	if ebiten.IsKeyPressed(ebiten.KeyShift) && ebiten.IsKeyPressed(ebiten.KeyQ) {
+		renderer.game.RequestQuit()
+	}
+
+	// Handle quit confirmation if active
+	if renderer.game.IsConfirmingQuit() {
+		if inpututil.IsKeyJustPressed(ebiten.KeyY) {
+			if renderer.game.ConfirmQuit(true) {
+				return ebiten.Termination
+			}
+		}
+
+		if inpututil.IsKeyJustPressed(ebiten.KeyN) {
+			renderer.game.ConfirmQuit(false)
+		}
+
+		return nil
+	}
+
 	// Up
 	if inpututil.IsKeyJustPressed(ebiten.KeyArrowUp) || inpututil.IsKeyJustPressed(ebiten.KeyK) || inpututil.IsKeyJustPressed(ebiten.KeyNumpad8) {
 		renderer.game.MovePlayer(0, -1)
@@ -100,11 +120,6 @@ func (renderer *EbitenRenderer) Update() error {
 	// Down right
 	if inpututil.IsKeyJustPressed(ebiten.KeyPageDown) || inpututil.IsKeyJustPressed(ebiten.KeyN) || inpututil.IsKeyJustPressed(ebiten.KeyNumpad3) {
 		renderer.game.MovePlayer(1, 1)
-	}
-
-	// Quit
-	if ebiten.IsKeyPressed(ebiten.KeyShift) && ebiten.IsKeyPressed(ebiten.KeyQ) {
-		return ebiten.Termination
 	}
 
 	return nil
