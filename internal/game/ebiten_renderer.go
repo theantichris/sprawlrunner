@@ -188,7 +188,7 @@ func (renderer *EbitenRenderer) RenderQuitPrompt(screen *ebiten.Image) {
 
 	options := &text.DrawOptions{}
 	options.GeoM.Translate(promptX, promptY)
-	options.ColorScale.ScaleWithColor(color.RGBA{R: 255, G: 255, B: 0, A: 255}) // Yellow
+	options.ColorScale.ScaleWithColor(colorYellow)
 
 	text.Draw(screen, prompt, renderer.fontFace, options)
 }
