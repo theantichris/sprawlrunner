@@ -90,161 +90,193 @@ func TestNewGame(t *testing.T) {
 }
 
 func TestMovePlayer(t *testing.T) {
-	tests := []struct {
-		name      string
-		startX    int
-		startY    int
-		dx        int
-		dy        int
-		expectX   int
-		expectY   int
-		wantMoved bool
-	}{
-		{
-			name:      "move right on floor",
-			startX:    15, // Inside Room 1
-			startY:    9,
-			dx:        1,
-			dy:        0,
-			expectX:   16,
-			expectY:   9,
-			wantMoved: true,
-		},
-		{
-			name:      "move left on floor",
-			startX:    15, // Inside Room 1
-			startY:    9,
-			dx:        -1,
-			dy:        0,
-			expectX:   14,
-			expectY:   9,
-			wantMoved: true,
-		},
-		{
-			name:      "move down on floor",
-			startX:    15, // Inside Room 1
-			startY:    9,
-			dx:        0,
-			dy:        1,
-			expectX:   15,
-			expectY:   10,
-			wantMoved: true,
-		},
-		{
-			name:      "move up on floor",
-			startX:    15, // Inside Room 1
-			startY:    9,
-			dx:        0,
-			dy:        -1,
-			expectX:   15,
-			expectY:   8,
-			wantMoved: true,
-		},
-		{
-			name:      "blocked by wall at room edge",
-			startX:    10, // Left edge of Room 1
-			startY:    9,
-			dx:        -1,
-			dy:        0,
-			expectX:   10,
-			expectY:   9,
-			wantMoved: false,
-		},
-		{
-			name:      "blocked by wall at top of room",
-			startX:    15, // Inside Room 1
-			startY:    5,  // Top edge
-			dx:        0,
-			dy:        -1,
-			expectX:   15,
-			expectY:   5,
-			wantMoved: false,
-		},
-		{
-			name:      "blocked by left edge of map",
-			startX:    0,
-			startY:    9,
-			dx:        -1,
-			dy:        0,
-			expectX:   0,
-			expectY:   9,
-			wantMoved: false,
-		},
-		{
-			name:      "blocked by right edge of map",
-			startX:    79,
-			startY:    9,
-			dx:        1,
-			dy:        0,
-			expectX:   79,
-			expectY:   9,
-			wantMoved: false,
-		},
-		{
-			name:      "blocked by top edge of map",
-			startX:    15,
-			startY:    0,
-			dx:        0,
-			dy:        -1,
-			expectX:   15,
-			expectY:   0,
-			wantMoved: false,
-		},
-		{
-			name:      "blocked by bottom edge of map",
-			startX:    15,
-			startY:    23,
-			dx:        0,
-			dy:        1,
-			expectX:   15,
-			expectY:   23,
-			wantMoved: false,
-		},
-		{
-			name:      "no movement",
-			startX:    15,
-			startY:    9,
-			dx:        0,
-			dy:        0,
-			expectX:   15,
-			expectY:   9,
-			wantMoved: false,
-		},
-		{
-			name:      "large step blocked by edge",
-			startX:    15,
-			startY:    9,
-			dx:        100,
-			dy:        0,
-			expectX:   15,
-			expectY:   9,
-			wantMoved: false,
-		},
-	}
+	t.Run("moves player", func(t *testing.T) {
 
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			game := NewGame()
-			game.Player.X = tt.startX
-			game.Player.Y = tt.startY
+		tests := []struct {
+			name      string
+			startX    int
+			startY    int
+			dx        int
+			dy        int
+			expectX   int
+			expectY   int
+			wantMoved bool
+		}{
+			{
+				name:      "move right on floor",
+				startX:    15, // Inside Room 1
+				startY:    9,
+				dx:        1,
+				dy:        0,
+				expectX:   16,
+				expectY:   9,
+				wantMoved: true,
+			},
+			{
+				name:      "move left on floor",
+				startX:    15, // Inside Room 1
+				startY:    9,
+				dx:        -1,
+				dy:        0,
+				expectX:   14,
+				expectY:   9,
+				wantMoved: true,
+			},
+			{
+				name:      "move down on floor",
+				startX:    15, // Inside Room 1
+				startY:    9,
+				dx:        0,
+				dy:        1,
+				expectX:   15,
+				expectY:   10,
+				wantMoved: true,
+			},
+			{
+				name:      "move up on floor",
+				startX:    15, // Inside Room 1
+				startY:    9,
+				dx:        0,
+				dy:        -1,
+				expectX:   15,
+				expectY:   8,
+				wantMoved: true,
+			},
+			{
+				name:      "blocked by wall at room edge",
+				startX:    10, // Left edge of Room 1
+				startY:    9,
+				dx:        -1,
+				dy:        0,
+				expectX:   10,
+				expectY:   9,
+				wantMoved: false,
+			},
+			{
+				name:      "blocked by wall at top of room",
+				startX:    15, // Inside Room 1
+				startY:    5,  // Top edge
+				dx:        0,
+				dy:        -1,
+				expectX:   15,
+				expectY:   5,
+				wantMoved: false,
+			},
+			{
+				name:      "blocked by left edge of map",
+				startX:    0,
+				startY:    9,
+				dx:        -1,
+				dy:        0,
+				expectX:   0,
+				expectY:   9,
+				wantMoved: false,
+			},
+			{
+				name:      "blocked by right edge of map",
+				startX:    79,
+				startY:    9,
+				dx:        1,
+				dy:        0,
+				expectX:   79,
+				expectY:   9,
+				wantMoved: false,
+			},
+			{
+				name:      "blocked by top edge of map",
+				startX:    15,
+				startY:    0,
+				dx:        0,
+				dy:        -1,
+				expectX:   15,
+				expectY:   0,
+				wantMoved: false,
+			},
+			{
+				name:      "blocked by bottom edge of map",
+				startX:    15,
+				startY:    23,
+				dx:        0,
+				dy:        1,
+				expectX:   15,
+				expectY:   23,
+				wantMoved: false,
+			},
+			{
+				name:      "no movement",
+				startX:    15,
+				startY:    9,
+				dx:        0,
+				dy:        0,
+				expectX:   15,
+				expectY:   9,
+				wantMoved: false,
+			},
+			{
+				name:      "large step blocked by edge",
+				startX:    15,
+				startY:    9,
+				dx:        100,
+				dy:        0,
+				expectX:   15,
+				expectY:   9,
+				wantMoved: false,
+			},
+		}
 
-			game.MovePlayer(tt.dx, tt.dy)
+		for _, tt := range tests {
+			t.Run(tt.name, func(t *testing.T) {
+				game := NewGame()
+				game.Player.X = tt.startX
+				game.Player.Y = tt.startY
 
-			if game.Player.X != tt.expectX {
-				t.Errorf("want player X %d, got %d", tt.expectX, game.Player.X)
-			}
+				game.MovePlayer(tt.dx, tt.dy)
 
-			if game.Player.Y != tt.expectY {
-				t.Errorf("want player Y %d, got %d", tt.expectY, game.Player.Y)
-			}
+				if game.Player.X != tt.expectX {
+					t.Errorf("want player X %d, got %d", tt.expectX, game.Player.X)
+				}
 
-			moved := game.Player.X != tt.startX || game.Player.Y != tt.startY
+				if game.Player.Y != tt.expectY {
+					t.Errorf("want player Y %d, got %d", tt.expectY, game.Player.Y)
+				}
 
-			if moved != tt.wantMoved {
-				t.Errorf("want player moved %v, got %v", tt.wantMoved, moved)
-			}
-		})
-	}
+				moved := game.Player.X != tt.startX || game.Player.Y != tt.startY
+
+				if moved != tt.wantMoved {
+					t.Errorf("want player moved %v, got %v", tt.wantMoved, moved)
+				}
+			})
+		}
+	})
+
+	t.Run("updates camera", func(t *testing.T) {
+		game := NewGame()
+
+		initialCameraX := game.CameraX
+		initialCameraY := game.CameraY
+
+		// Move player right
+		game.MovePlayer(1, 0)
+
+		if game.CameraX != initialCameraX+1 {
+			t.Errorf("expected cameraX %d, got %d", initialCameraX+1, game.CameraX)
+		}
+
+		if game.CameraY != initialCameraY {
+			t.Errorf("expected cameraY %d, got %d", initialCameraY, game.CameraY)
+		}
+
+		// Move player down
+		game.MovePlayer(0, 1)
+
+		if game.CameraX != initialCameraX+1 {
+			t.Errorf("expected cameraX %d, got %d", initialCameraX+1, game.CameraX)
+		}
+
+		if game.CameraY != initialCameraY+1 {
+			t.Errorf("expected cameraY %d, got %d", initialCameraY+1, game.CameraY)
+		}
+	})
 }
 
 func TestCreateRoom(t *testing.T) {

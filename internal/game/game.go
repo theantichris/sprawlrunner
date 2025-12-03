@@ -88,6 +88,9 @@ func (game *Game) MovePlayer(dx, dy int) {
 
 	game.Player.X = newX
 	game.Player.Y = newY
+
+	game.CameraX = newX
+	game.CameraY = newY
 }
 
 // CreateRoom creates a room at x, y with the specified dimensions.
