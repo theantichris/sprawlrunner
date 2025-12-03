@@ -5,8 +5,11 @@ import "image/color"
 
 // Player represents the runner controlled by the user.
 type Player struct {
-	X     int         // X is the player's horizontal position in tile coordinates.
-	Y     int         // Y is the player's vertical position in tile coordinates.
-	Glyph rune        // Glyph is the rune used to render the player.
-	Color color.Color // Color is the color used to render the player.
+	X      int         // X is the player's horizontal position in tile coordinates
+	Y      int         // Y is the player's vertical position in tile coordinates
+	Glyph  rune        // Glyph is the rune used to render the player
+	Color  color.Color // Color is the color used to render the player
+	Name   string      // Name is the player's name
+	Level  int         // Level is the player's experience Level
+	Health int         // Health is the player's hit points
 }
