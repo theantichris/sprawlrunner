@@ -3,72 +3,90 @@ package game
 import "testing"
 
 func TestNewGame(t *testing.T) {
-	game := NewGame()
+	t.Run("initializes map", func(t *testing.T) {
+		game := NewGame()
 
-	if game.Width != 80 {
-		t.Errorf("want width 80, got %d", game.Width)
-	}
-
-	if game.Height != 24 {
-		t.Errorf("want height 24, got %d", game.Height)
-	}
-
-	if len(game.Tiles) != 24 {
-		t.Errorf("want tiles height 24, got %d", len(game.Tiles))
-	}
-
-	for y := range 24 {
-		if len(game.Tiles[y]) != 80 {
-			t.Errorf("want tiles[%d] width 80, got %d", y, len(game.Tiles[y]))
+		if game.Width != 80 {
+			t.Errorf("want width 80, got %d", game.Width)
 		}
-	}
 
-	// Spot check Room 1 (at 10, 5, size 15x8)
-	// Check a few tiles inside Room 1 are floors
-	if game.Tiles[7][15].Glyph != '.' {
-		t.Errorf("want Room 1 interior tile glyph '.', got %c", game.Tiles[7][15].Glyph)
-	}
-	if !game.Tiles[7][15].Walkable {
-		t.Error("want Room 1 interior tile walkable true, got false")
-	}
+		if game.Height != 24 {
+			t.Errorf("want height 24, got %d", game.Height)
+		}
 
-	// Spot check Room 2 (at 35, 3, size 12x10)
-	if game.Tiles[8][41].Glyph != '.' {
-		t.Errorf("want Room 2 interior tile glyph '.', got %c", game.Tiles[8][41].Glyph)
-	}
-	if !game.Tiles[8][41].Walkable {
-		t.Error("want Room 2 interior tile walkable true, got false")
-	}
+		if len(game.Tiles) != 24 {
+			t.Errorf("want tiles height 24, got %d", len(game.Tiles))
+		}
 
-	// Spot check Room 3 (at 55, 12, size 18x9)
-	if game.Tiles[16][64].Glyph != '.' {
-		t.Errorf("want Room 3 interior tile glyph '.', got %c", game.Tiles[16][64].Glyph)
-	}
-	if !game.Tiles[16][64].Walkable {
-		t.Error("want Room 3 interior tile walkable true, got false")
-	}
+		for y := range 24 {
+			if len(game.Tiles[y]) != 80 {
+				t.Errorf("want tiles[%d] width 80, got %d", y, len(game.Tiles[y]))
+			}
+		}
 
-	// Check a tile that should be a wall (outside rooms/corridors)
-	if game.Tiles[0][0].Glyph != '#' {
-		t.Errorf("want wall tile glyph '#', got %c", game.Tiles[0][0].Glyph)
-	}
-	if game.Tiles[0][0].Walkable {
-		t.Error("want wall tile walkable false, got true")
-	}
+		// Spot check Room 1 (at 10, 5, size 15x8)
+		// Check a few tiles inside Room 1 are floors
+		if game.Tiles[7][15].Glyph != '.' {
+			t.Errorf("want Room 1 interior tile glyph '.', got %c", game.Tiles[7][15].Glyph)
+		}
+		if !game.Tiles[7][15].Walkable {
+			t.Error("want Room 1 interior tile walkable true, got false")
+		}
 
-	// Check player position (center of Room 1)
-	if game.Player.X != 17 {
-		t.Errorf("want player X 17, got %d", game.Player.X)
-	}
+		// Spot check Room 2 (at 35, 3, size 12x10)
+		if game.Tiles[8][41].Glyph != '.' {
+			t.Errorf("want Room 2 interior tile glyph '.', got %c", game.Tiles[8][41].Glyph)
+		}
+		if !game.Tiles[8][41].Walkable {
+			t.Error("want Room 2 interior tile walkable true, got false")
+		}
 
-	if game.Player.Y != 9 {
-		t.Errorf("want player Y 9, got %d", game.Player.Y)
-	}
+		// Spot check Room 3 (at 55, 12, size 18x9)
+		if game.Tiles[16][64].Glyph != '.' {
+			t.Errorf("want Room 3 interior tile glyph '.', got %c", game.Tiles[16][64].Glyph)
+		}
+		if !game.Tiles[16][64].Walkable {
+			t.Error("want Room 3 interior tile walkable true, got false")
+		}
 
-	// Check player glyph
-	if game.Player.Glyph != '@' {
-		t.Errorf("want player glyph '@', got %c", game.Player.Glyph)
-	}
+		// Check a tile that should be a wall (outside rooms/corridors)
+		if game.Tiles[0][0].Glyph != '#' {
+			t.Errorf("want wall tile glyph '#', got %c", game.Tiles[0][0].Glyph)
+		}
+		if game.Tiles[0][0].Walkable {
+			t.Error("want wall tile walkable false, got true")
+		}
+
+		// Check player position (center of Room 1)
+		if game.Player.X != 17 {
+			t.Errorf("want player X 17, got %d", game.Player.X)
+		}
+
+		if game.Player.Y != 9 {
+			t.Errorf("want player Y 9, got %d", game.Player.Y)
+		}
+
+		// Check player glyph
+		if game.Player.Glyph != '@' {
+			t.Errorf("want player glyph '@', got %c", game.Player.Glyph)
+		}
+	})
+
+	t.Run("initializes viewport", func(t *testing.T) {
+		game := NewGame()
+
+		// Viewport should be centered on player's starting position
+		expectedCameraX := game.Player.X
+		expectedCameraY := game.Player.Y
+
+		if game.CameraX != expectedCameraX {
+			t.Errorf("expected camera X %d, got %d", expectedCameraX, game.CameraX)
+		}
+
+		if game.CameraY != expectedCameraY {
+			t.Errorf("expected camera Y %d, got %d", expectedCameraY, game.CameraY)
+		}
+	})
 }
 
 func TestMovePlayer(t *testing.T) {
