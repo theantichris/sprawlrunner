@@ -12,8 +12,12 @@ import (
 )
 
 const (
-	tileSize   = 16
-	fontGoMono = "../../assets/fonts/Go-Mono.ttf"
+	tileSize          = 16
+	fontGoMono        = "../../assets/fonts/Go-Mono.ttf"
+	mapViewportWidth  = 56
+	mapViewportHeight = 20
+	hudPanelWidth     = 24
+	messageLogHeight  = 4
 )
 
 // EbitenRenderer handles rendering a Game using the Ebiten game engine.
@@ -57,6 +61,38 @@ func NewEbitenRenderer(game *Game, fontPath string, fontSize float64) (*EbitenRe
 	}
 
 	return renderer, nil
+}
+
+// CalculateViewportBounds returns the tile coordinates visible in the viewport.
+func (renderer *EbitenRenderer) CalculateViewportBounds() (int, int, int, int) {
+	// Calculate viewport bounds centered on camera
+	minX := renderer.game.CameraX - mapViewportWidth/2
+	minY := renderer.game.CameraY - mapViewportHeight/2
+	maxX := minX + mapViewportWidth
+	maxY := minY + mapViewportHeight
+
+	// Clamp to map bounds
+	if minX < 0 {
+		minX = 0
+		maxX = mapViewportWidth
+	}
+
+	if minY < 0 {
+		minY = 0
+		maxY = mapViewportHeight
+	}
+
+	if maxX > renderer.game.Width {
+		maxX = renderer.game.Width
+		minX = maxX - mapViewportWidth
+	}
+
+	if maxY > renderer.game.Height {
+		maxY = renderer.game.Height
+		minY = maxY - mapViewportHeight
+	}
+
+	return minX, minY, maxX, maxY
 }
 
 // Update updates the game state. Required by ebiten.Game interface.

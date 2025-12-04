@@ -31,6 +31,23 @@ func TestNewEbitenRenderer(t *testing.T) {
 	}
 }
 
+func TestCalculateViewportBounds(t *testing.T) {
+	game := NewGame()
+	game.CameraX = 30
+	game.CameraY = 12
+
+	renderer, err := NewEbitenRenderer(game, fontGoMono, 16.0)
+	if err != nil {
+		t.Fatalf("failed to create renderer: %v", err)
+	}
+
+	minX, minY, maxX, maxY := renderer.CalculateViewportBounds()
+
+	if minX != 2 || minY != 2 || maxX != 58 || maxY != 22 {
+		t.Errorf("expected bounds 2, 2, 58, 22, got %d, %d, %d, %d", minX, minY, maxX, maxY)
+	}
+}
+
 func TestRenderTile(t *testing.T) {
 	game := NewGame()
 

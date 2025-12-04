@@ -38,5 +38,6 @@ tileX
 tileY
 u
 v2
+x20
 x24
 x8
