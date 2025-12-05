@@ -166,6 +166,7 @@ func (renderer *EbitenRenderer) Draw(screen *ebiten.Image) {
 	screen.Fill(color.Black) // Clear screen to black
 	renderer.RenderMap(screen, renderer.game)
 	renderer.RenderPlayer(screen, renderer.game.Player)
+	renderer.RenderStatsPanel(screen)
 
 	if renderer.game.IsConfirmingQuit() {
 		renderer.RenderQuitPrompt(screen)
@@ -245,4 +246,40 @@ func (renderer *EbitenRenderer) RenderQuitPrompt(screen *ebiten.Image) {
 	options.ColorScale.ScaleWithColor(colorYellow)
 
 	text.Draw(screen, prompt, renderer.fontFace, options)
+}
+
+// RenderStatsPanel draws the player stats in the right panel (24 columns).
+func (renderer *EbitenRenderer) RenderStatsPanel(screen *ebiten.Image) {
+	// Panel stats at x=56 (after viewport), top of screen
+	panelX := float64(mapViewportWidth * renderer.tileSize)
+	startY := 0.0
+	lineHeight := float64(renderer.tileSize)
+
+	// Draw panel title
+	renderer.drawText(screen, "== Runner ==", panelX, startY, colorYellow)
+
+	// Draw player name
+	nameY := startY + lineHeight*2                                                   // TODO: constant
+	renderer.drawText(screen, renderer.game.Player.Name, panelX, nameY, color.White) // TODO: add white
+
+	// Draw level
+	levelY := nameY + lineHeight*2
+	levelText := fmt.Sprintf("Level: %d", renderer.game.Player.Level)
+	renderer.drawText(screen, levelText, panelX, levelY, color.White)
+
+	// Draw health
+	healthY := levelY + lineHeight
+	healthText := fmt.Sprintf("Health: %d", renderer.game.Player.Health)
+	renderer.drawText(screen, healthText, panelX, healthY, color.White)
+}
+
+// drawText is a helper to render text at pixel coordinates.
+func (renderer *EbitenRenderer) drawText(screen *ebiten.Image, txt string, x, y float64, clr color.Color) {
+	// TODO: use for quit message
+
+	options := &text.DrawOptions{}
+	options.GeoM.Translate(x, y)
+	options.ColorScale.ScaleWithColor(clr)
+
+	text.Draw(screen, txt, renderer.fontFace, options)
 }

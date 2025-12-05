@@ -15,6 +15,7 @@ Numpad
 PgDn
 PgUp
 RenderPlayer
+RenderStatsPanel
 RenderTile
 Shadowrun
 TODO

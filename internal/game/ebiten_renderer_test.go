@@ -270,3 +270,21 @@ func TestFontParseFailed(t *testing.T) {
 		t.Errorf("expected %v, got %v", ErrFontParseFailed, err)
 	}
 }
+
+func TestRenderStatsPanel(t *testing.T) {
+	game := NewGame()
+
+	game.Player.Name = "Decker"
+	game.Player.Level = 1
+	game.Player.Health = 15
+
+	renderer, err := NewEbitenRenderer(game, fontGoMono, 16.0)
+	if err != nil {
+		t.Errorf("failed to create renderer: %v", err)
+	}
+
+	screen := ebiten.NewImage(renderer.screenWidth, renderer.screenHeight)
+
+	// Should not panic
+	renderer.RenderStatsPanel(screen)
+}
