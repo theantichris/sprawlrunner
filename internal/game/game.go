@@ -27,8 +27,11 @@ func NewGame() *Game {
 		Height: mapHeight,
 		Tiles:  make([][]Tile, mapHeight),
 		Player: Player{
-			Glyph: '@',
-			Color: color.White,
+			Glyph:  '@',
+			Color:  color.White,
+			Name:   "Decker",
+			Level:  1,
+			Health: 100,
 		},
 	}
 
