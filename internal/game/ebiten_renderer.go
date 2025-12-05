@@ -204,12 +204,19 @@ func (renderer *EbitenRenderer) RenderPlayer(screen *ebiten.Image, player Player
 	renderer.renderGlyph(screen, player.Glyph, player.X, player.Y, player.Color)
 }
 
-// RenderMap draws all the tiles from the game map onto the screen.
+// RenderMap draws all the tiles from the game map that are visible in the viewport.
 func (renderer *EbitenRenderer) RenderMap(screen *ebiten.Image, game *Game) {
-	for y := range game.Height {
-		for x := range game.Width {
+	minX, minY, maxX, maxY := renderer.CalculateViewportBounds()
+
+	for y := minY; y < maxY; y++ {
+		for x := minX; x < maxX; x++ {
 			tile := game.Tiles[y][x]
-			renderer.RenderTile(screen, tile, x, y)
+
+			// Render at screen position offset by viewport origin
+			screenX := x - minX
+			screenY := y - minY
+
+			renderer.RenderTile(screen, tile, screenX, screenY)
 		}
 	}
 }

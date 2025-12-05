@@ -100,17 +100,47 @@ func TestRenderTile(t *testing.T) {
 }
 
 func TestRenderMap(t *testing.T) {
-	game := NewGame()
+	t.Run("method exists and does not panic", func(t *testing.T) {
+		game := NewGame()
 
-	renderer, err := NewEbitenRenderer(game, fontGoMono, tileSize)
-	if err != nil {
-		t.Fatalf("failed to create renderer: %v", err)
-	}
+		renderer, err := NewEbitenRenderer(game, fontGoMono, tileSize)
+		if err != nil {
+			t.Fatalf("failed to create renderer: %v", err)
+		}
 
-	testImage := ebiten.NewImage(renderer.screenWidth, renderer.screenHeight)
+		testImage := ebiten.NewImage(renderer.screenWidth, renderer.screenHeight)
 
-	// Verify method exists and does not panic.
-	renderer.RenderMap(testImage, game)
+		// Verify method exists and does not panic.
+		renderer.RenderMap(testImage, game)
+	})
+
+	t.Run("only renders viewpoert", func(t *testing.T) {
+		game := NewGame()
+
+		// Position camera so viewport shows tiles [2,2] to [57,21]
+		game.CameraX = 30
+		game.CameraY = 12
+
+		renderer, err := NewEbitenRenderer(game, fontGoMono, 16.0)
+		if err != nil {
+			t.Fatalf("failed to create renderer: %v", err)
+		}
+
+		// Create a test screen
+		screen := ebiten.NewImage(renderer.screenWidth, renderer.screenHeight)
+
+		// RenderMap should not panic and should complete
+		renderer.RenderMap(screen, game)
+
+		// Verify bounds were calculated correctly
+		minX, minY, maxX, maxY := renderer.CalculateViewportBounds()
+		expectedTileCount := (maxX - minX) * (maxY - minY)
+
+		// Should be rendering 56x20 = 1120 tiles
+		if expectedTileCount != 1120 {
+			t.Errorf("expected to render 1120 tiles, calculated bounds would rnder %d", expectedTileCount)
+		}
+	})
 }
 
 func TestRenderPlayer(t *testing.T) {
