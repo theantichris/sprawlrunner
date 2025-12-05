@@ -199,9 +199,21 @@ func (renderer *EbitenRenderer) RenderTile(screen *ebiten.Image, tile Tile, tile
 	renderer.renderGlyph(screen, tile.Glyph, tileX, tileY, tile.Color)
 }
 
-// RenderPlayer draws the player character at their current position.
+// CalculatePlayerScreenPosition returns the player's screen coordinates
+// relative to the viewport origin.
+func (renderer *EbitenRenderer) CalculatePlayerScreenPosition() (int, int) {
+	minX, minY, _, _ := renderer.CalculateViewportBounds()
+
+	screenX := renderer.game.Player.X - minX
+	screenY := renderer.game.Player.Y - minY
+
+	return screenX, screenY
+}
+
+// RenderPlayer draws the player character at their viewport relative position.
 func (renderer *EbitenRenderer) RenderPlayer(screen *ebiten.Image, player Player) {
-	renderer.renderGlyph(screen, player.Glyph, player.X, player.Y, player.Color)
+	screenX, screenY := renderer.CalculatePlayerScreenPosition()
+	renderer.renderGlyph(screen, player.Glyph, screenX, screenY, player.Color)
 }
 
 // RenderMap draws all the tiles from the game map that are visible in the viewport.

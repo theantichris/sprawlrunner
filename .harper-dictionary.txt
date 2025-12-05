@@ -1,5 +1,6 @@
 ADOM
 CD
+CalculatePlayerScreenPosition
 Charmbracelet
 Ebiten
 EbitenRenderer

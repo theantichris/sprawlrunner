@@ -144,17 +144,39 @@ func TestRenderMap(t *testing.T) {
 }
 
 func TestRenderPlayer(t *testing.T) {
-	game := NewGame()
+	t.Run("centers player in viewport", func(t *testing.T) {
+		game := NewGame()
 
-	renderer, err := NewEbitenRenderer(game, fontGoMono, tileSize)
-	if err != nil {
-		t.Fatalf("failed to create renderer: %v", err)
-	}
+		renderer, err := NewEbitenRenderer(game, fontGoMono, 16.0)
+		if err != nil {
+			t.Fatalf("failed to create renderer: %v", err)
+		}
 
-	testImage := ebiten.NewImage(renderer.screenWidth, renderer.screenHeight)
+		// Place player and camera at center of map
+		game.Player.X = 40
+		game.Player.Y = 12
+		game.CameraX = 40
+		game.CameraY = 12
 
-	// Verify method exists and does not panic.
-	renderer.RenderPlayer(testImage, game.Player)
+		minX, minY, _, _ := renderer.CalculateViewportBounds()
+
+		// Calculate where player should appear on screen
+		screenX, screenY := renderer.CalculatePlayerScreenPosition()
+
+		// Player would position (40, 12) - viewport minimum (12, 2) = screen (28, 10)
+		// This is the center of a 56x20 viewport
+		expectedX := game.Player.X - minX
+		expectedY := game.Player.Y - minY
+
+		if screenX != expectedX || screenY != expectedY {
+			t.Errorf("expected player at screen (%d,%d), got (%d,%d)", expectedX, expectedY, screenX, screenY)
+		}
+
+		// Should be centered (28, 10)
+		if screenX != 28 || screenY != 10 {
+			t.Errorf("expected player at screen (28,10), got (%d,%d)", screenX, screenY)
+		}
+	})
 }
 
 func TestHandleInput(t *testing.T) {
