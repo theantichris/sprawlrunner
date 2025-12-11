@@ -13,7 +13,6 @@ import (
 
 const (
 	tileSize          = 16
-	fontGoMono        = "../../assets/fonts/Go-Mono.ttf"
 	mapViewportWidth  = 56
 	mapViewportHeight = 20
 	hudPanelWidth     = 24

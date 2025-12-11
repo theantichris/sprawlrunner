@@ -8,6 +8,8 @@ import (
 	"github.com/hajimehoshi/ebiten/v2"
 )
 
+const fontGoMono = "../../assets/fonts/Go-Mono.ttf"
+
 func TestNewEbitenRenderer(t *testing.T) {
 	game := NewGame()
 
