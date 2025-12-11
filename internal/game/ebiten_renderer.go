@@ -259,17 +259,18 @@ func (renderer *EbitenRenderer) RenderStatsPanel(screen *ebiten.Image) {
 // RenderMessageLog draws the message log area at the bottom of (4 lines).
 func (renderer *EbitenRenderer) RenderMessageLog(screen *ebiten.Image) {
 	// Message log starts below the viewport (20 tiles down)
-	logY := float64(mapViewportHeight * renderer.tileSize)
-	logX := float64(renderer.tileSize)
+	logY := mapViewportHeight
 
 	// Draw separator line
-	separator := "--------------------------------------------------------------------------------"
-	renderer.drawText(screen, separator, 0, logY, colorYellow)
+	for x := 0; x < renderer.game.Width; x++ {
+		renderer.renderGlyph(screen, '=', x, logY, colorYellow)
+	}
 
 	// If quit confirmation is active show it in the message log
 	if renderer.game.IsConfirmingQuit() {
-		promptY := logY + float64(renderer.tileSize)
-		renderer.drawText(screen, "Really quit? (Y/N)", logX, promptY, colorYellow)
+		promptX := 1.0 * float64(renderer.tileSize)
+		promptY := float64((logY + 1) * renderer.tileSize)
+		renderer.drawText(screen, "Really quit? (Y/N)", promptX, promptY, colorYellow)
 	}
 }
 
