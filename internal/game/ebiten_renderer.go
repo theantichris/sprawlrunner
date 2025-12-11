@@ -167,10 +167,7 @@ func (renderer *EbitenRenderer) Draw(screen *ebiten.Image) {
 	renderer.RenderMap(screen, renderer.game)
 	renderer.RenderPlayer(screen, renderer.game.Player)
 	renderer.RenderStatsPanel(screen)
-
-	if renderer.game.IsConfirmingQuit() {
-		renderer.RenderQuitPrompt(screen)
-	}
+	renderer.RenderMessageLog(screen)
 }
 
 // Layout returns the game's logical screen size. Required by ebiten.Game interface.
@@ -234,20 +231,6 @@ func (renderer *EbitenRenderer) RenderMap(screen *ebiten.Image, game *Game) {
 	}
 }
 
-// RenderQuitPrompt draws the quit confirmation dialog.
-func (renderer *EbitenRenderer) RenderQuitPrompt(screen *ebiten.Image) {
-	prompt := "Really quit? (Y/N)"
-
-	promptX := float64(renderer.tileSize)
-	promptY := float64(renderer.screenHeight - renderer.tileSize*2)
-
-	options := &text.DrawOptions{}
-	options.GeoM.Translate(promptX, promptY)
-	options.ColorScale.ScaleWithColor(colorYellow)
-
-	text.Draw(screen, prompt, renderer.fontFace, options)
-}
-
 // RenderStatsPanel draws the player stats in the right panel (24 columns).
 func (renderer *EbitenRenderer) RenderStatsPanel(screen *ebiten.Image) {
 	// Panel stats at x=56 (after viewport), top of screen
@@ -273,10 +256,25 @@ func (renderer *EbitenRenderer) RenderStatsPanel(screen *ebiten.Image) {
 	renderer.drawText(screen, healthText, panelX, healthY, color.White)
 }
 
+// RenderMessageLog draws the message log area at the bottom of (4 lines).
+func (renderer *EbitenRenderer) RenderMessageLog(screen *ebiten.Image) {
+	// Message log starts below the viewport (20 tiles down)
+	logY := float64(mapViewportHeight * renderer.tileSize)
+	logX := float64(renderer.tileSize)
+
+	// Draw separator line
+	separator := "--------------------------------------------------------------------------------"
+	renderer.drawText(screen, separator, 0, logY, colorYellow)
+
+	// If quit confirmation is active show it in the message log
+	if renderer.game.IsConfirmingQuit() {
+		promptY := logY + float64(renderer.tileSize)
+		renderer.drawText(screen, "Really quit? (Y/N)", logX, promptY, colorYellow)
+	}
+}
+
 // drawText is a helper to render text at pixel coordinates.
 func (renderer *EbitenRenderer) drawText(screen *ebiten.Image, txt string, x, y float64, clr color.Color) {
-	// TODO: use for quit message
-
 	options := &text.DrawOptions{}
 	options.GeoM.Translate(x, y)
 	options.ColorScale.ScaleWithColor(clr)

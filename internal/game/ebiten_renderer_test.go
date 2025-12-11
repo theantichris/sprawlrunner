@@ -288,3 +288,17 @@ func TestRenderStatsPanel(t *testing.T) {
 	// Should not panic
 	renderer.RenderStatsPanel(screen)
 }
+
+func TestRenderMessageLog(t *testing.T) {
+	game := NewGame()
+
+	renderer, err := NewEbitenRenderer(game, fontGoMono, 16.0)
+	if err != nil {
+		t.Fatalf("failed to create renderer: %v", err)
+	}
+
+	screen := ebiten.NewImage(renderer.screenWidth, renderer.screenHeight)
+
+	// Should not panic
+	renderer.RenderMessageLog(screen)
+}
