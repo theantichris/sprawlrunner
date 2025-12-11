@@ -116,7 +116,7 @@ func TestRenderMap(t *testing.T) {
 		renderer.RenderMap(testImage, game)
 	})
 
-	t.Run("only renders viewpoert", func(t *testing.T) {
+	t.Run("only renders viewport", func(t *testing.T) {
 		game := NewGame()
 
 		// Position camera so viewport shows tiles [2,2] to [57,21]
@@ -140,7 +140,7 @@ func TestRenderMap(t *testing.T) {
 
 		// Should be rendering 56x20 = 1120 tiles
 		if expectedTileCount != 1120 {
-			t.Errorf("expected to render 1120 tiles, calculated bounds would rnder %d", expectedTileCount)
+			t.Errorf("expected to render 1120 tiles, calculated bounds would render %d", expectedTileCount)
 		}
 	})
 }

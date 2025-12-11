@@ -233,7 +233,7 @@ func (renderer *EbitenRenderer) RenderMap(screen *ebiten.Image, game *Game) {
 
 // RenderStatsPanel draws the player stats in the right panel (24 columns).
 func (renderer *EbitenRenderer) RenderStatsPanel(screen *ebiten.Image) {
-	// Panel stats at x=56 (after viewport), top of screen
+	// Panel starts at x=56 (after viewport), top of screen
 	panelX := float64(mapViewportWidth * renderer.tileSize)
 	startY := 0.0
 	lineHeight := float64(renderer.tileSize)
