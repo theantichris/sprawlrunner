@@ -1,5 +1,6 @@
 ADOM
 CD
+CalculatePlayerScreenPosition
 Charmbracelet
 Ebiten
 EbitenRenderer
@@ -13,7 +14,9 @@ NewGame
 Numpad
 PgDn
 PgUp
+RenderMessageLog
 RenderPlayer
+RenderStatsPanel
 RenderTile
 Shadowrun
 TODO
@@ -38,5 +41,6 @@ tileX
 tileY
 u
 v2
+x20
 x24
 x8

@@ -14,6 +14,8 @@ type Game struct {
 	Height         int      // Height describes the vertical map dimensions in tiles
 	Tiles          [][]Tile // Tiles is a 2D grid of map tiles indexed as Tiles[y][x]
 	Player         Player   // Player represents the runner controlled by the user
+	CameraX        int      // CameraX is the camera's center position (horizontal)
+	CameraY        int      // CameraY is the camera's center position (vertical)
 	confirmingQuit bool     // confirmingQuit tracks whether the game is waiting for quit confirmation.
 }
 
@@ -25,8 +27,11 @@ func NewGame() *Game {
 		Height: mapHeight,
 		Tiles:  make([][]Tile, mapHeight),
 		Player: Player{
-			Glyph: '@',
-			Color: color.White,
+			Glyph:  '@',
+			Color:  color.White,
+			Name:   "Decker",
+			Level:  1,
+			Health: 100,
 		},
 	}
 
@@ -61,6 +66,10 @@ func (game *Game) initializeMap(width, height int) {
 	// Start player in center of first room
 	game.Player.X = 17
 	game.Player.Y = 9
+
+	// Center camera on player
+	game.CameraX = game.Player.X
+	game.CameraY = game.Player.Y
 }
 
 // MovePlayer attempts to move the player by (dx, dy). The move only succeeds
@@ -82,6 +91,9 @@ func (game *Game) MovePlayer(dx, dy int) {
 
 	game.Player.X = newX
 	game.Player.Y = newY
+
+	game.CameraX = newX
+	game.CameraY = newY
 }
 
 // CreateRoom creates a room at x, y with the specified dimensions.

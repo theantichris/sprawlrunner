@@ -4,8 +4,8 @@ package game
 import "image/color"
 
 var (
-	FloorTile = Tile{Glyph: '.', Color: color.Gray{Y: 192}, Walkable: true}
-	WallTile  = Tile{Glyph: '#', Color: color.Gray{Y: 192}, Walkable: false}
+	FloorTile = Tile{Glyph: '.', Color: colorGray, Walkable: true}
+	WallTile  = Tile{Glyph: '#', Color: colorGray, Walkable: false}
 )
 
 // Tile represents a single map cell terrain in the game world.
