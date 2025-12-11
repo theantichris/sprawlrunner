@@ -163,6 +163,7 @@ func (renderer *EbitenRenderer) Update() error {
 // Draw renders the game state to the screen. Required by ebiten.Game interface.
 func (renderer *EbitenRenderer) Draw(screen *ebiten.Image) {
 	screen.Fill(color.Black) // Clear screen to black
+
 	renderer.RenderMap(screen, renderer.game)
 	renderer.RenderPlayer(screen, renderer.game.Player)
 	renderer.RenderStatsPanel(screen)
@@ -241,13 +242,13 @@ func (renderer *EbitenRenderer) RenderStatsPanel(screen *ebiten.Image) {
 	renderer.drawText(screen, "== Runner ==", panelX, startY, colorYellow)
 
 	// Draw player name
-	nameY := startY + lineHeight*2                                                   // TODO: constant
-	renderer.drawText(screen, renderer.game.Player.Name, panelX, nameY, color.White) // TODO: add white
+	nameY := startY + lineHeight*2
+	renderer.drawText(screen, renderer.game.Player.Name, panelX, nameY, colorWhite)
 
 	// Draw level
 	levelY := nameY + lineHeight*2
 	levelText := fmt.Sprintf("Level: %d", renderer.game.Player.Level)
-	renderer.drawText(screen, levelText, panelX, levelY, color.White)
+	renderer.drawText(screen, levelText, panelX, levelY, colorWhite)
 
 	// Draw health
 	healthY := levelY + lineHeight
