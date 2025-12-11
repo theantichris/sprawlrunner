@@ -256,7 +256,8 @@ func (renderer *EbitenRenderer) RenderStatsPanel(screen *ebiten.Image) {
 	renderer.drawText(screen, healthText, panelX, healthY, color.White)
 }
 
-// RenderMessageLog draws the message log area at the bottom of (4 lines).
+// RenderMessageLog draws the message log area at the bottom of the screen
+// (4 lines high).
 func (renderer *EbitenRenderer) RenderMessageLog(screen *ebiten.Image) {
 	// Message log starts below the viewport (20 tiles down)
 	logY := mapViewportHeight
