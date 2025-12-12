@@ -24,7 +24,7 @@ func TestNewGame(t *testing.T) {
 			}
 		}
 
-		// Spot check Room 1 (at 10, 5, size 15x8)
+		// Spot check room 1 (at 10, 5, size 15x8)
 		// Check a few tiles inside Room 1 are floors
 		if game.Tiles[7][15].Glyph != '.' {
 			t.Errorf("want Room 1 interior tile glyph '.', got %c", game.Tiles[7][15].Glyph)
@@ -33,7 +33,7 @@ func TestNewGame(t *testing.T) {
 			t.Error("want Room 1 interior tile walkable true, got false")
 		}
 
-		// Spot check Room 2 (at 35, 3, size 12x10)
+		// Spot check room 2 (at 35, 3, size 12x10)
 		if game.Tiles[8][41].Glyph != '.' {
 			t.Errorf("want Room 2 interior tile glyph '.', got %c", game.Tiles[8][41].Glyph)
 		}
@@ -41,7 +41,7 @@ func TestNewGame(t *testing.T) {
 			t.Error("want Room 2 interior tile walkable true, got false")
 		}
 
-		// Spot check Room 3 (at 55, 12, size 18x9)
+		// Spot check room 3 (at 55, 12, size 18x9)
 		if game.Tiles[16][64].Glyph != '.' {
 			t.Errorf("want Room 3 interior tile glyph '.', got %c", game.Tiles[16][64].Glyph)
 		}
@@ -91,7 +91,6 @@ func TestNewGame(t *testing.T) {
 
 func TestMovePlayer(t *testing.T) {
 	t.Run("moves player", func(t *testing.T) {
-
 		tests := []struct {
 			name      string
 			startX    int
@@ -277,6 +276,30 @@ func TestMovePlayer(t *testing.T) {
 			t.Errorf("expected cameraY %d, got %d", initialCameraY+1, game.CameraY)
 		}
 	})
+
+	t.Run("successful advances turn", func(t *testing.T) {
+		game := NewGame()
+		initialTurn := game.TurnCount
+
+		game.MovePlayer(1, 0) // Move right
+
+		if game.TurnCount != initialTurn+1 {
+			t.Errorf("wanted TurnCount %d after move, got %d", initialTurn+1, game.TurnCount)
+		}
+	})
+
+	t.Run("blocked move advances turn", func(t *testing.T) {
+		game := NewGame()
+		game.Player.X = 10 // Left edge of room 1
+		game.Player.Y = 9
+		initialTurn := game.TurnCount
+
+		game.MovePlayer(-1, 0) // Try to move into wall
+
+		if game.TurnCount != initialTurn+1 {
+			t.Errorf("want TurnCount %d after blocked move, got %d", initialTurn+1, game.TurnCount)
+		}
+	})
 }
 
 func TestCreateRoom(t *testing.T) {
@@ -427,4 +450,29 @@ func TestCancelQuitReturnsToGame(t *testing.T) {
 	if game.IsConfirmingQuit() {
 		t.Error("game should not be confirming quit after cancellation")
 	}
+}
+
+func TestTick(t *testing.T) {
+	t.Run("increments turn counter", func(t *testing.T) {
+		game := NewGame()
+
+		initialTurn := game.TurnCount
+		game.Tick()
+
+		if game.TurnCount != initialTurn+1 {
+			t.Errorf("want TurnCount %d, got %d", initialTurn+1, game.TurnCount)
+		}
+	})
+
+	t.Run("increments turn counter multiple times", func(t *testing.T) {
+		game := NewGame()
+
+		game.Tick()
+		game.Tick()
+		game.Tick()
+
+		if game.TurnCount != 3 {
+			t.Errorf("want TurnCount 3, got %d", game.TurnCount)
+		}
+	})
 }

@@ -16,6 +16,7 @@ type Game struct {
 	Player         Player   // Player represents the runner controlled by the user
 	CameraX        int      // CameraX is the camera's center position (horizontal)
 	CameraY        int      // CameraY is the camera's center position (vertical)
+	TurnCount      int      // TurnCount tracks the number of turns that have elapsed.
 	confirmingQuit bool     // confirmingQuit tracks whether the game is waiting for quit confirmation.
 }
 
@@ -74,7 +75,10 @@ func (game *Game) initializeMap(width, height int) {
 
 // MovePlayer attempts to move the player by (dx, dy). The move only succeeds
 // if the target tile is inside the map and is walkable.
+// This method advances the game turn regardless of whether movement succeeds.
 func (game *Game) MovePlayer(dx, dy int) {
+	defer game.Tick()
+
 	newX := game.Player.X + dx
 	newY := game.Player.Y + dy
 
@@ -134,4 +138,10 @@ func (game *Game) ConfirmQuit(confirmed bool) bool {
 	game.confirmingQuit = false
 
 	return confirmed
+}
+
+// Tick advances the game state by one turn.
+// This is called once per player action to process the game.
+func (game *Game) Tick() {
+	game.TurnCount++
 }
