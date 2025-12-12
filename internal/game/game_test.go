@@ -24,7 +24,7 @@ func TestNewGame(t *testing.T) {
 			}
 		}
 
-		// Spot check Room 1 (at 10, 5, size 15x8)
+		// Spot check room 1 (at 10, 5, size 15x8)
 		// Check a few tiles inside Room 1 are floors
 		if game.Tiles[7][15].Glyph != '.' {
 			t.Errorf("want Room 1 interior tile glyph '.', got %c", game.Tiles[7][15].Glyph)
@@ -33,7 +33,7 @@ func TestNewGame(t *testing.T) {
 			t.Error("want Room 1 interior tile walkable true, got false")
 		}
 
-		// Spot check Room 2 (at 35, 3, size 12x10)
+		// Spot check room 2 (at 35, 3, size 12x10)
 		if game.Tiles[8][41].Glyph != '.' {
 			t.Errorf("want Room 2 interior tile glyph '.', got %c", game.Tiles[8][41].Glyph)
 		}
@@ -41,7 +41,7 @@ func TestNewGame(t *testing.T) {
 			t.Error("want Room 2 interior tile walkable true, got false")
 		}
 
-		// Spot check Room 3 (at 55, 12, size 18x9)
+		// Spot check room 3 (at 55, 12, size 18x9)
 		if game.Tiles[16][64].Glyph != '.' {
 			t.Errorf("want Room 3 interior tile glyph '.', got %c", game.Tiles[16][64].Glyph)
 		}
@@ -427,4 +427,29 @@ func TestCancelQuitReturnsToGame(t *testing.T) {
 	if game.IsConfirmingQuit() {
 		t.Error("game should not be confirming quit after cancellation")
 	}
+}
+
+func TestTick(t *testing.T) {
+	t.Run("increments turn counter", func(t *testing.T) {
+		game := NewGame()
+
+		initialTurn := game.TurnCount
+		game.Tick()
+
+		if game.TurnCount != initialTurn+1 {
+			t.Errorf("want TurnCount %d, got %d", initialTurn+1, game.TurnCount)
+		}
+	})
+
+	t.Run("increments turn counter multiple times", func(t *testing.T) {
+		game := NewGame()
+
+		game.Tick()
+		game.Tick()
+		game.Tick()
+
+		if game.TurnCount != 3 {
+			t.Errorf("want TurnCount 3, got %d", game.TurnCount)
+		}
+	})
 }
