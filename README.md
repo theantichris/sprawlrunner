@@ -9,6 +9,49 @@
 A rogue-like ASCII game in a cyberpunk universe inspired by [ADOM](https://www.adom.de/home/index.html)
 and [Shadowrun](https://store.catalystgamelabs.com/collections/shadowrun).
 
+## Getting Started
+
+### Prerequisites
+
+- Go 1.23 or later ([Download Go](https://go.dev/dl/))
+- Git
+
+### Installation
+
+1. **Clone the repository**:
+
+   ```bash
+   git clone https://github.com/theantichris/sprawlrunner.git
+   cd sprawlrunner
+   ```
+
+2. **Download dependencies**:
+
+   ```bash
+   go mod download
+   ```
+
+### Running the Game
+
+Run the game directly with:
+
+```bash
+go run ./cmd/game
+```
+
+### Building
+
+To build an executable:
+
+```bash
+go build -o sprawlrunner ./cmd/game
+```
+
+Then run the built executable:
+
+- **Linux/macOS**: `./sprawlrunner`
+- **Windows**: `sprawlrunner.exe`
+
 ## Controls
 
 ### Interface
