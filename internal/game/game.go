@@ -75,7 +75,10 @@ func (game *Game) initializeMap(width, height int) {
 
 // MovePlayer attempts to move the player by (dx, dy). The move only succeeds
 // if the target tile is inside the map and is walkable.
+// This method advances the game turn regardless of whether movement succeeds.
 func (game *Game) MovePlayer(dx, dy int) {
+	defer game.Tick()
+
 	newX := game.Player.X + dx
 	newY := game.Player.Y + dy
 

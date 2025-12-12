@@ -91,7 +91,6 @@ func TestNewGame(t *testing.T) {
 
 func TestMovePlayer(t *testing.T) {
 	t.Run("moves player", func(t *testing.T) {
-
 		tests := []struct {
 			name      string
 			startX    int
@@ -275,6 +274,30 @@ func TestMovePlayer(t *testing.T) {
 
 		if game.CameraY != initialCameraY+1 {
 			t.Errorf("expected cameraY %d, got %d", initialCameraY+1, game.CameraY)
+		}
+	})
+
+	t.Run("successful advances turn", func(t *testing.T) {
+		game := NewGame()
+		initialTurn := game.TurnCount
+
+		game.MovePlayer(1, 0) // Move right
+
+		if game.TurnCount != initialTurn+1 {
+			t.Errorf("wanted TurnCount %d after move, got %d", initialTurn+1, game.TurnCount)
+		}
+	})
+
+	t.Run("blocked move advances turn", func(t *testing.T) {
+		game := NewGame()
+		game.Player.X = 10 // Left edge of room 1
+		game.Player.Y = 9
+		initialTurn := game.TurnCount
+
+		game.MovePlayer(-1, 0) // Try to move into wall
+
+		if game.TurnCount != initialTurn+1 {
+			t.Errorf("want TurnCount %d after blocked move, got %d", initialTurn+1, game.TurnCount)
 		}
 	})
 }
