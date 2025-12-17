@@ -1,5 +1,10 @@
 package game
 
+const (
+	mapViewportWidth  = 56
+	mapViewportHeight = 20
+)
+
 // CalculateViewportBounds returns the tile coordinates visible in the viewport.
 func (renderer *EbitenRenderer) CalculateViewportBounds() (int, int, int, int) {
 	// Calculate viewport bounds centered on camera
