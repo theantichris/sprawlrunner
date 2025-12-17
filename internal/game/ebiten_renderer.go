@@ -103,6 +103,10 @@ func (renderer *EbitenRenderer) Update() error {
 			renderer.game.StartGame()
 		}
 
+		if ebiten.IsKeyPressed(ebiten.KeyShift) && ebiten.IsKeyPressed(ebiten.KeyQ) {
+			return ebiten.Termination
+		}
+
 		return nil
 	}
 
@@ -172,6 +176,12 @@ func (renderer *EbitenRenderer) Update() error {
 // Draw renders the game state to the screen. Required by ebiten.Game interface.
 func (renderer *EbitenRenderer) Draw(screen *ebiten.Image) {
 	screen.Fill(color.Black) // Clear screen to black
+
+	// Show title screen if not playing
+	if !renderer.game.IsPlaying() {
+		renderer.RenderTitleScreen(screen)
+		return
+	}
 
 	renderer.RenderMap(screen, renderer.game)
 	renderer.RenderPlayer(screen, renderer.game.Player)
@@ -291,4 +301,53 @@ func (renderer *EbitenRenderer) drawText(screen *ebiten.Image, txt string, x, y 
 	options.ColorScale.ScaleWithColor(clr)
 
 	text.Draw(screen, txt, renderer.fontFace, options)
+}
+
+// RenderTitleScreen draws the title screen with ASCII art and instructions.
+func (renderer *EbitenRenderer) RenderTitleScreen(screen *ebiten.Image) {
+	screen.Fill(colorBlack) // Clear screen to black
+
+	titleLines := []string{
+		"  _________                          .__                                          ",
+		" /   _____/_________________ __  _  _|  |_______ __ __  ____   ____   ___________ ",
+		" \\_____  \\\\____ \\_  __ \\__  \\\\ \\/ \\/ /  |\\_  __ \\  |  \\/    \\ /    \\_/ __ \\_  __ \\",
+		" /        \\  |_> >  | \\// __ \\\\     /|  |_|  | \\/  |  /   |  \\   |  \\  ___/|  | \\/",
+		"/_______  /   __/|__|  (____  /\\/\\_/ |____/__|  |____/|___|  /___|  /\\___  >__|   ",
+		"        \\/|__|              \\/                             \\/     \\/     \\/       ",
+	}
+
+	screenWidthPixels := float64(renderer.game.Width * renderer.tileSize)
+
+	// Starting Y position (centered vertically)
+	startY := 5.0 * float64(renderer.tileSize)
+	lineHeight := float64(renderer.tileSize)
+
+	// Draw title ASCII art
+	for i, line := range titleLines {
+		y := startY + float64(i)*lineHeight
+
+		// Center each line based on its length
+		textWidth := text.Advance(line, renderer.fontFace)
+		x := (screenWidthPixels - textWidth) / 2.0
+		renderer.drawText(screen, line, x, y, colorYellow)
+	}
+
+	metaStartY := startY + float64(len(titleLines)+3)*lineHeight
+
+	subtitle := "A Cyberpunk Roguelike"
+	subtitleWidth := text.Advance(subtitle, renderer.fontFace)
+	subtitleX := (screenWidthPixels - subtitleWidth) / 2.0
+	renderer.drawText(screen, subtitle, subtitleX, metaStartY, colorWhite)
+
+	copyrightY := metaStartY + lineHeight*2
+	copyright := "Copyright 2025"
+	copyrightWidth := text.Advance(copyright, renderer.fontFace)
+	copyrightX := (screenWidthPixels - copyrightWidth) / 2.0
+	renderer.drawText(screen, copyright, copyrightX, copyrightY, colorWhite)
+
+	instructionY := float64(renderer.game.Height-3) * float64(renderer.tileSize)
+	quitInstruction := "Press SPACE to start or Q to quit"
+	quitInstructionWidth := text.Advance(quitInstruction, renderer.fontFace)
+	quitInstructionX := (screenWidthPixels - quitInstructionWidth) / 2.0
+	renderer.drawText(screen, quitInstruction, quitInstructionX, instructionY, colorYellow)
 }
