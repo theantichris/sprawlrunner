@@ -11,13 +11,7 @@ import (
 	"github.com/hajimehoshi/ebiten/v2/text/v2"
 )
 
-const (
-	tileSize          = 16
-	mapViewportWidth  = 56
-	mapViewportHeight = 20
-	hudPanelWidth     = 24
-	messageLogHeight  = 4
-)
+const tileSize = 16
 
 // EbitenRenderer handles rendering a Game using the Ebiten game engine.
 type EbitenRenderer struct {
@@ -62,41 +56,22 @@ func NewEbitenRenderer(game *Game, fontPath string, fontSize float64) (*EbitenRe
 	return renderer, nil
 }
 
-// CalculateViewportBounds returns the tile coordinates visible in the viewport.
-func (renderer *EbitenRenderer) CalculateViewportBounds() (int, int, int, int) {
-	// Calculate viewport bounds centered on camera
-	minX := renderer.game.CameraX - mapViewportWidth/2
-	minY := renderer.game.CameraY - mapViewportHeight/2
-	maxX := minX + mapViewportWidth
-	maxY := minY + mapViewportHeight
-
-	// Clamp to map bounds
-	if minX < 0 {
-		minX = 0
-		maxX = mapViewportWidth
-	}
-
-	if minY < 0 {
-		minY = 0
-		maxY = mapViewportHeight
-	}
-
-	if maxX > renderer.game.Width {
-		maxX = renderer.game.Width
-		minX = maxX - mapViewportWidth
-	}
-
-	if maxY > renderer.game.Height {
-		maxY = renderer.game.Height
-		minY = maxY - mapViewportHeight
-	}
-
-	return minX, minY, maxX, maxY
-}
-
 // Update updates the game state. Required by ebiten.Game interface.
 // Returns error if the game should terminate.
 func (renderer *EbitenRenderer) Update() error {
+	// Handle title screen
+	if renderer.game.State == StateTitleScreen {
+		if inpututil.IsKeyJustPressed(ebiten.KeySpace) {
+			renderer.game.StartGame()
+		}
+
+		if ebiten.IsKeyPressed(ebiten.KeyShift) && ebiten.IsKeyPressed(ebiten.KeyQ) {
+			return ebiten.Termination
+		}
+
+		return nil
+	}
+
 	// Quit
 	if ebiten.IsKeyPressed(ebiten.KeyShift) && ebiten.IsKeyPressed(ebiten.KeyQ) {
 		renderer.game.RequestQuit()
@@ -164,6 +139,12 @@ func (renderer *EbitenRenderer) Update() error {
 func (renderer *EbitenRenderer) Draw(screen *ebiten.Image) {
 	screen.Fill(color.Black) // Clear screen to black
 
+	// Show title screen if not playing
+	if renderer.game.State == StateTitleScreen {
+		renderer.RenderTitleScreen(screen)
+		return
+	}
+
 	renderer.RenderMap(screen, renderer.game)
 	renderer.RenderPlayer(screen, renderer.game.Player)
 	renderer.RenderStatsPanel(screen)
@@ -173,113 +154,4 @@ func (renderer *EbitenRenderer) Draw(screen *ebiten.Image) {
 // Layout returns the game's logical screen size. Required by ebiten.Game interface.
 func (renderer *EbitenRenderer) Layout(outsideWidth, outsideHeight int) (int, int) {
 	return renderer.screenWidth, renderer.screenHeight
-}
-
-// renderGlyph draws a single character glyph at the specified position with the given color.
-// This is a helper method used by RenderTile and RenderPlayer.
-func (renderer *EbitenRenderer) renderGlyph(screen *ebiten.Image, glyph rune, tileX, tileY int, color color.Color) {
-	// Convert tile coordinates to pixel coordinates
-	pixelX := float64(tileX * renderer.tileSize)
-	pixelY := float64(tileY * renderer.tileSize)
-
-	// Draw the glyph
-	glyphString := string(glyph)
-	options := &text.DrawOptions{}
-	options.GeoM.Translate(pixelX, pixelY)
-	options.ColorScale.ScaleWithColor(color)
-
-	text.Draw(screen, glyphString, renderer.fontFace, options)
-}
-
-// RenderTile draws a single tile glyph at the specified tile coordinates.
-// tileX and tileY are in tile units which are converted to pixel coordinates.
-func (renderer *EbitenRenderer) RenderTile(screen *ebiten.Image, tile Tile, tileX, tileY int) {
-	renderer.renderGlyph(screen, tile.Glyph, tileX, tileY, tile.Color)
-}
-
-// CalculatePlayerScreenPosition returns the player's screen coordinates
-// relative to the viewport origin.
-func (renderer *EbitenRenderer) CalculatePlayerScreenPosition() (int, int) {
-	minX, minY, _, _ := renderer.CalculateViewportBounds()
-
-	screenX := renderer.game.Player.X - minX
-	screenY := renderer.game.Player.Y - minY
-
-	return screenX, screenY
-}
-
-// RenderPlayer draws the player character at their viewport relative position.
-func (renderer *EbitenRenderer) RenderPlayer(screen *ebiten.Image, player Player) {
-	screenX, screenY := renderer.CalculatePlayerScreenPosition()
-	renderer.renderGlyph(screen, player.Glyph, screenX, screenY, player.Color)
-}
-
-// RenderMap draws all the tiles from the game map that are visible in the viewport.
-func (renderer *EbitenRenderer) RenderMap(screen *ebiten.Image, game *Game) {
-	minX, minY, maxX, maxY := renderer.CalculateViewportBounds()
-
-	for y := minY; y < maxY; y++ {
-		for x := minX; x < maxX; x++ {
-			tile := game.Tiles[y][x]
-
-			// Render at screen position offset by viewport origin
-			screenX := x - minX
-			screenY := y - minY
-
-			renderer.RenderTile(screen, tile, screenX, screenY)
-		}
-	}
-}
-
-// RenderStatsPanel draws the player stats in the right panel (24 columns).
-func (renderer *EbitenRenderer) RenderStatsPanel(screen *ebiten.Image) {
-	// Panel starts at x=56 (after viewport), top of screen
-	panelX := float64(mapViewportWidth * renderer.tileSize)
-	startY := 0.0
-	lineHeight := float64(renderer.tileSize)
-
-	// Draw panel title
-	renderer.drawText(screen, "== Runner ==", panelX, startY, colorYellow)
-
-	// Draw player name
-	nameY := startY + lineHeight*2
-	renderer.drawText(screen, renderer.game.Player.Name, panelX, nameY, colorWhite)
-
-	// Draw level
-	levelY := nameY + lineHeight*2
-	levelText := fmt.Sprintf("Level: %d", renderer.game.Player.Level)
-	renderer.drawText(screen, levelText, panelX, levelY, colorWhite)
-
-	// Draw health
-	healthY := levelY + lineHeight
-	healthText := fmt.Sprintf("Health: %d", renderer.game.Player.Health)
-	renderer.drawText(screen, healthText, panelX, healthY, color.White)
-}
-
-// RenderMessageLog draws the message log area at the bottom of the screen
-// (4 lines high).
-func (renderer *EbitenRenderer) RenderMessageLog(screen *ebiten.Image) {
-	// Message log starts below the viewport (20 tiles down)
-	logY := mapViewportHeight
-
-	// Draw separator line
-	for x := 0; x < renderer.game.Width; x++ {
-		renderer.renderGlyph(screen, '=', x, logY, colorYellow)
-	}
-
-	// If quit confirmation is active show it in the message log
-	if renderer.game.IsConfirmingQuit() {
-		promptX := 1.0 * float64(renderer.tileSize)
-		promptY := float64((logY + 1) * renderer.tileSize)
-		renderer.drawText(screen, "Really quit? (Y/N)", promptX, promptY, colorYellow)
-	}
-}
-
-// drawText is a helper to render text at pixel coordinates.
-func (renderer *EbitenRenderer) drawText(screen *ebiten.Image, txt string, x, y float64, clr color.Color) {
-	options := &text.DrawOptions{}
-	options.GeoM.Translate(x, y)
-	options.ColorScale.ScaleWithColor(clr)
-
-	text.Draw(screen, txt, renderer.fontFace, options)
 }

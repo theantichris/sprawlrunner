@@ -14,8 +14,8 @@ You are helping maintain **Sprawlrunner**, a Go ASCII cyberpunk roguelike
 - Entry point: `cmd/game/main.go`
 - Core game logic: `internal/game/game.go` (game state, turn-based logic)
 - Entities and tiles: `internal/game/player.go`, `internal/game/tile.go`
-- Rendering and input: `internal/game/ebiten_renderer.go` (depends on Ebitengine
- only)
+- Rendering and input: `internal/game/ebiten_*.go` (split into core, viewport,
+ game rendering, title screen, text utilities - see project_overview.md)
 - Assets: `assets/fonts/Go-Mono.ttf` (required monospace font)
 
 `internal/game` must stay UI-agnostic; all Ebitengine-specific code lives in the

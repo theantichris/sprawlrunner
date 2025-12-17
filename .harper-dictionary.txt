@@ -6,6 +6,7 @@ Ebiten
 EbitenRenderer
 Ebitengine
 Ebitengine's
+GameState
 LoadFont
 MovePlayer
 Nav

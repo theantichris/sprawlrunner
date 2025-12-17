@@ -8,16 +8,28 @@ const (
 	mapHeight = 24
 )
 
+// GameState represents the current state of the game.
+type GameState int
+
+const (
+	// StateTitleScreen represents the title screen state.
+	StateTitleScreen GameState = iota
+
+	// StatePlaying represents the playing state.
+	StatePlaying
+)
+
 // Game holds the current game state including map and entities.
 type Game struct {
-	Width          int      // Width describes the horizontal map dimensions in tiles
-	Height         int      // Height describes the vertical map dimensions in tiles
-	Tiles          [][]Tile // Tiles is a 2D grid of map tiles indexed as Tiles[y][x]
-	Player         Player   // Player represents the runner controlled by the user
-	CameraX        int      // CameraX is the camera's center position (horizontal)
-	CameraY        int      // CameraY is the camera's center position (vertical)
-	TurnCount      int      // TurnCount tracks the number of turns that have elapsed.
-	confirmingQuit bool     // confirmingQuit tracks whether the game is waiting for quit confirmation.
+	Width          int       // Width describes the horizontal map dimensions in tiles
+	Height         int       // Height describes the vertical map dimensions in tiles
+	Tiles          [][]Tile  // Tiles is a 2D grid of map tiles indexed as Tiles[y][x]
+	Player         Player    // Player represents the runner controlled by the user
+	CameraX        int       // CameraX is the camera's center position (horizontal)
+	CameraY        int       // CameraY is the camera's center position (vertical)
+	TurnCount      int       // TurnCount tracks the number of turns that have elapsed.
+	confirmingQuit bool      // confirmingQuit tracks whether the game is waiting for quit confirmation.
+	State          GameState // State tracks the current game state (title screen, playing, etc.)
 }
 
 // NewGame creates a new Game with three rooms connected by corridors.
@@ -34,6 +46,7 @@ func NewGame() *Game {
 			Level:  1,
 			Health: 100,
 		},
+		State: StateTitleScreen,
 	}
 
 	game.initializeMap(mapWidth, mapHeight)
@@ -144,4 +157,9 @@ func (game *Game) ConfirmQuit(confirmed bool) bool {
 // This is called once per player action to process the game.
 func (game *Game) Tick() {
 	game.TurnCount++
+}
+
+// StartGame transitions from the title screen to playing state.
+func (game *Game) StartGame() {
+	game.State = StatePlaying
 }
