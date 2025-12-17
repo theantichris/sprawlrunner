@@ -159,11 +159,6 @@ func (game *Game) Tick() {
 	game.TurnCount++
 }
 
-// IsPlaying returns true if the game is in the playing state.
-func (game *Game) IsPlaying() bool {
-	return game.State == StatePlaying
-}
-
 // StartGame transitions from the title screen to playing state.
 func (game *Game) StartGame() {
 	game.State = StatePlaying

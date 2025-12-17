@@ -60,7 +60,7 @@ func NewEbitenRenderer(game *Game, fontPath string, fontSize float64) (*EbitenRe
 // Returns error if the game should terminate.
 func (renderer *EbitenRenderer) Update() error {
 	// Handle title screen
-	if !renderer.game.IsPlaying() {
+	if renderer.game.State == StateTitleScreen {
 		if inpututil.IsKeyJustPressed(ebiten.KeySpace) {
 			renderer.game.StartGame()
 		}
@@ -140,7 +140,7 @@ func (renderer *EbitenRenderer) Draw(screen *ebiten.Image) {
 	screen.Fill(color.Black) // Clear screen to black
 
 	// Show title screen if not playing
-	if !renderer.game.IsPlaying() {
+	if renderer.game.State == StateTitleScreen {
 		renderer.RenderTitleScreen(screen)
 		return
 	}
