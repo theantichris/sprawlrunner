@@ -97,6 +97,15 @@ func (renderer *EbitenRenderer) CalculateViewportBounds() (int, int, int, int) {
 // Update updates the game state. Required by ebiten.Game interface.
 // Returns error if the game should terminate.
 func (renderer *EbitenRenderer) Update() error {
+	// Handle title screen
+	if !renderer.game.IsPlaying() {
+		if inpututil.IsKeyJustPressed(ebiten.KeySpace) {
+			renderer.game.StartGame()
+		}
+
+		return nil
+	}
+
 	// Quit
 	if ebiten.IsKeyPressed(ebiten.KeyShift) && ebiten.IsKeyPressed(ebiten.KeyQ) {
 		renderer.game.RequestQuit()
