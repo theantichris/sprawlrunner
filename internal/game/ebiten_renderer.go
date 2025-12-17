@@ -12,12 +12,24 @@ import (
 )
 
 const (
-	tileSize          = 16
-	mapViewportWidth  = 56
-	mapViewportHeight = 20
-	hudPanelWidth     = 24
-	messageLogHeight  = 4
+	tileSize               = 16
+	mapViewportWidth       = 56
+	mapViewportHeight      = 20
+	hudPanelWidth          = 24
+	messageLogHeight       = 4
+	titleScreenSubtitle    = "A Cyberpunk Roguelike"
+	titleScreenCopyright   = "Copyright 2025"
+	titleScreenInstruction = "Press SPACE to start or Q to quit"
 )
+
+var titleScreenArt = []string{
+	"  _________                          .__                                          ",
+	" /   _____/_________________ __  _  _|  |_______ __ __  ____   ____   ___________ ",
+	" \\_____  \\\\____ \\_  __ \\__  \\\\ \\/ \\/ /  |\\_  __ \\  |  \\/    \\ /    \\_/ __ \\_  __ \\",
+	" /        \\  |_> >  | \\// __ \\\\     /|  |_|  | \\/  |  /   |  \\   |  \\  ___/|  | \\/",
+	"/_______  /   __/|__|  (____  /\\/\\_/ |____/__|  |____/|___|  /___|  /\\___  >__|   ",
+	"        \\/|__|              \\/                             \\/     \\/     \\/       ",
+}
 
 // EbitenRenderer handles rendering a Game using the Ebiten game engine.
 type EbitenRenderer struct {
@@ -307,47 +319,27 @@ func (renderer *EbitenRenderer) drawText(screen *ebiten.Image, txt string, x, y 
 func (renderer *EbitenRenderer) RenderTitleScreen(screen *ebiten.Image) {
 	screen.Fill(colorBlack) // Clear screen to black
 
-	titleLines := []string{
-		"  _________                          .__                                          ",
-		" /   _____/_________________ __  _  _|  |_______ __ __  ____   ____   ___________ ",
-		" \\_____  \\\\____ \\_  __ \\__  \\\\ \\/ \\/ /  |\\_  __ \\  |  \\/    \\ /    \\_/ __ \\_  __ \\",
-		" /        \\  |_> >  | \\// __ \\\\     /|  |_|  | \\/  |  /   |  \\   |  \\  ___/|  | \\/",
-		"/_______  /   __/|__|  (____  /\\/\\_/ |____/__|  |____/|___|  /___|  /\\___  >__|   ",
-		"        \\/|__|              \\/                             \\/     \\/     \\/       ",
-	}
-
-	screenWidthPixels := float64(renderer.game.Width * renderer.tileSize)
-
-	// Starting Y position (centered vertically)
-	startY := 5.0 * float64(renderer.tileSize)
 	lineHeight := float64(renderer.tileSize)
+	startY := 5.0 * lineHeight
 
 	// Draw title ASCII art
-	for i, line := range titleLines {
+	for i, line := range titleScreenArt {
 		y := startY + float64(i)*lineHeight
-
-		// Center each line based on its length
-		textWidth := text.Advance(line, renderer.fontFace)
-		x := (screenWidthPixels - textWidth) / 2.0
-		renderer.drawText(screen, line, x, y, colorYellow)
+		renderer.centerText(screen, line, y, colorYellow)
 	}
 
-	metaStartY := startY + float64(len(titleLines)+3)*lineHeight
+	metaY := startY + float64(len(titleScreenArt)+3)*lineHeight
+	renderer.centerText(screen, titleScreenSubtitle, metaY, colorWhite)
+	renderer.centerText(screen, titleScreenCopyright, metaY+lineHeight*2, colorWhite)
 
-	subtitle := "A Cyberpunk Roguelike"
-	subtitleWidth := text.Advance(subtitle, renderer.fontFace)
-	subtitleX := (screenWidthPixels - subtitleWidth) / 2.0
-	renderer.drawText(screen, subtitle, subtitleX, metaStartY, colorWhite)
+	instructionsY := float64(renderer.game.Height-3) * lineHeight
+	renderer.centerText(screen, titleScreenInstruction, instructionsY, colorYellow)
+}
 
-	copyrightY := metaStartY + lineHeight*2
-	copyright := "Copyright 2025"
-	copyrightWidth := text.Advance(copyright, renderer.fontFace)
-	copyrightX := (screenWidthPixels - copyrightWidth) / 2.0
-	renderer.drawText(screen, copyright, copyrightX, copyrightY, colorWhite)
-
-	instructionY := float64(renderer.game.Height-3) * float64(renderer.tileSize)
-	quitInstruction := "Press SPACE to start or Q to quit"
-	quitInstructionWidth := text.Advance(quitInstruction, renderer.fontFace)
-	quitInstructionX := (screenWidthPixels - quitInstructionWidth) / 2.0
-	renderer.drawText(screen, quitInstruction, quitInstructionX, instructionY, colorYellow)
+// centerText measures, centers, and draws at the given Y position.
+func (renderer *EbitenRenderer) centerText(screen *ebiten.Image, txt string, y float64, clr color.Color) {
+	screenWidthPixels := float64(renderer.game.Width * renderer.tileSize)
+	textWidth := text.Advance(txt, renderer.fontFace)
+	x := (screenWidthPixels - textWidth) / 2.0
+	renderer.drawText(screen, txt, x, y, clr)
 }
