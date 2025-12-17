@@ -25,9 +25,15 @@ sprawlrunner/
 │       ├── player_test.go       # Tests for player-specific behavior
 │       ├── tile.go              # Tile definitions, map representation
 │       ├── tile_test.go         # Tests for tiles and map behavior
-│       ├── ebiten_renderer.go   # Ebitengine rendering and input handling
-│       ├── ebiten_renderer_test.go # Tests for renderer-specific integration
-│       └── errors.go            # Sentinel error definitions
+│       ├── ebiten_renderer.go      # Core renderer (Update/Draw/Layout)
+│       ├── ebiten_renderer_test.go # Tests for core renderer
+│       ├── ebiten_viewport.go      # Viewport and camera calculations
+│       ├── ebiten_render_game.go   # In-game rendering (map, player, HUD)
+│       ├── ebiten_render_game_test.go # Tests for game rendering
+│       ├── ebiten_render_title.go  # Title screen rendering
+│       ├── ebiten_text.go          # Text rendering utilities
+│       ├── color.go                # Color constants
+│       └── errors.go               # Sentinel error definitions
 ├── assets/
 │   └── fonts/
 │       └── Go-Mono.ttf          # Required font asset (monospaced)
