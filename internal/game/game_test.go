@@ -3,6 +3,24 @@ package game
 import "testing"
 
 func TestNewGame(t *testing.T) {
+	t.Run("starts on title screen", func(t *testing.T) {
+		game := NewGame()
+
+		if game.IsPlaying() {
+			t.Error("expected title screen, not playing")
+		}
+	})
+
+	t.Run("starts game", func(t *testing.T) {
+		game := NewGame()
+
+		game.StartGame()
+
+		if !game.IsPlaying() {
+			t.Error("expected game to be in playing state")
+		}
+	})
+
 	t.Run("initializes map", func(t *testing.T) {
 		game := NewGame()
 
