@@ -1,5 +1,14 @@
 # Sprawlrunner
 
+```text
+  _________                          .__
+ /   _____/_________________ __  _  _|  |_______ __ __  ____   ____   ___________
+ \_____  \\____ \_  __ \__  \\ \/ \/ /  |\_  __ \  |  \/    \ /    \_/ __ \_  __ \
+ /        \  |_> >  | \// __ \\     /|  |_|  | \/  |  /   |  \   |  \  ___/|  | \/
+/_______  /   __/|__|  (____  /\/\_/ |____/__|  |____/|___|  /___|  /\___  >__|
+        \/|__|              \/                             \/     \/     \/
+```
+
 [![Go Reference](https://pkg.go.dev/badge/github.com/theantichris/sprawlrunner.svg)](https://pkg.go.dev/github.com/theantichris/sprawlrunner)
 [![Build Status](https://github.com/theantichris/sprawlrunner/actions/workflows/go.yml/badge.svg)](https://github.com/theantichris/sprawlrunner/actions)
 [![Build Status](https://github.com/theantichris/sprawlrunner/actions/workflows/markdown.yml/badge.svg)](https://github.com/theantichris/sprawlrunner/actions)
