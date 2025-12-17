@@ -74,38 +74,6 @@ func NewEbitenRenderer(game *Game, fontPath string, fontSize float64) (*EbitenRe
 	return renderer, nil
 }
 
-// CalculateViewportBounds returns the tile coordinates visible in the viewport.
-func (renderer *EbitenRenderer) CalculateViewportBounds() (int, int, int, int) {
-	// Calculate viewport bounds centered on camera
-	minX := renderer.game.CameraX - mapViewportWidth/2
-	minY := renderer.game.CameraY - mapViewportHeight/2
-	maxX := minX + mapViewportWidth
-	maxY := minY + mapViewportHeight
-
-	// Clamp to map bounds
-	if minX < 0 {
-		minX = 0
-		maxX = mapViewportWidth
-	}
-
-	if minY < 0 {
-		minY = 0
-		maxY = mapViewportHeight
-	}
-
-	if maxX > renderer.game.Width {
-		maxX = renderer.game.Width
-		minX = maxX - mapViewportWidth
-	}
-
-	if maxY > renderer.game.Height {
-		maxY = renderer.game.Height
-		minY = maxY - mapViewportHeight
-	}
-
-	return minX, minY, maxX, maxY
-}
-
 // Update updates the game state. Required by ebiten.Game interface.
 // Returns error if the game should terminate.
 func (renderer *EbitenRenderer) Update() error {
@@ -226,17 +194,6 @@ func (renderer *EbitenRenderer) renderGlyph(screen *ebiten.Image, glyph rune, ti
 // tileX and tileY are in tile units which are converted to pixel coordinates.
 func (renderer *EbitenRenderer) RenderTile(screen *ebiten.Image, tile Tile, tileX, tileY int) {
 	renderer.renderGlyph(screen, tile.Glyph, tileX, tileY, tile.Color)
-}
-
-// CalculatePlayerScreenPosition returns the player's screen coordinates
-// relative to the viewport origin.
-func (renderer *EbitenRenderer) CalculatePlayerScreenPosition() (int, int) {
-	minX, minY, _, _ := renderer.CalculateViewportBounds()
-
-	screenX := renderer.game.Player.X - minX
-	screenY := renderer.game.Player.Y - minY
-
-	return screenX, screenY
 }
 
 // RenderPlayer draws the player character at their viewport relative position.
